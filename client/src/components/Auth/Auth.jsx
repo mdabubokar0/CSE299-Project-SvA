@@ -3,9 +3,78 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
 import "swiper/css";
 import authData from "./authData.json";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 export const Auth = () => {
+  const navigate = useNavigate();
   const [active, setActive] = useState("register");
+  const [registerData, setRegisterData] = useState({
+    name: "",
+    username: "",
+    role: "",
+    password: "",
+  });
+  const [loginData, setLoginData] = useState({
+    username: "",
+    password: "",
+  });
+
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await axios.post(
+        "http://localhost:8081/api/register",
+        registerData
+      );
+      setRegisterData({
+        name: "",
+        username: "",
+        password: "",
+      });
+      handleActive("login");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await axios.post(
+        "http://localhost:8081/api/login",
+        loginData
+      );
+
+      if (response.status === 200) {
+        // Storing JWT token and role in localStorage
+        localStorage.setItem("token", response.data.token);
+        localStorage.setItem("role", response.data.role);
+        navigate("/dashboard");
+      }
+    } catch (error) {
+      console.error(
+        "Login failed:",
+        error.response?.data?.error || error.message
+      );
+    }
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    if (active === "register") {
+      setRegisterData({
+        ...registerData,
+        [name]: value,
+      });
+    } else {
+      setLoginData({
+        ...loginData,
+        [name]: value,
+      });
+    }
+  };
 
   const handleActive = (value) => {
     setActive(value);
@@ -45,18 +114,41 @@ export const Auth = () => {
                 event management system
               </p>
             </div>
-            <form className="flex flex-col gap-3 mt-12 text-xs w-[400px]">
+            <form
+              className="flex flex-col gap-3 mt-12 text-xs w-[400px]"
+              onSubmit={handleRegister}
+            >
               <input
+                name="name"
+                value={registerData.name}
+                onChange={handleChange}
                 type="text"
                 placeholder="Enter Full Name"
                 className="w-full h-12 rounded-max border border-primary px-3 bg-bg focus:outline-none"
               />
               <input
+                name="username"
+                value={registerData.username}
+                onChange={handleChange}
                 type="text"
                 placeholder="Enter Username"
                 className="w-full h-12 rounded-max border border-primary px-3 bg-bg focus:outline-none"
               />
+              <select
+                name="role"
+                id="role"
+                value={registerData.role}
+                onChange={handleChange}
+                className="w-full h-12 rounded-max border border-primary px-3 bg-bg focus:outline-none"
+              >
+                <option value="attendee">Attendee</option>
+                <option value="organizer">Organizer</option>
+                <option value="photographer">Photographer</option>
+              </select>
               <input
+                name="password"
+                value={registerData.password}
+                onChange={handleChange}
                 type="password"
                 placeholder="Enter Password"
                 className="w-full h-12 rounded-max border border-primary px-3 bg-bg focus:outline-none"
@@ -97,13 +189,22 @@ export const Auth = () => {
                 management system
               </p>
             </div>
-            <form className="flex flex-col gap-3 mt-12 text-xs w-[400px]">
+            <form
+              className="flex flex-col gap-3 mt-12 text-xs w-[400px]"
+              onSubmit={handleLogin}
+            >
               <input
+                name="username"
+                value={loginData.username}
+                onChange={handleChange}
                 type="text"
                 placeholder="Enter Username"
                 className="w-full h-12 rounded-max border border-primary px-3 bg-bg focus:outline-none"
               />
               <input
+                name="password"
+                value={loginData.password}
+                onChange={handleChange}
                 type="password"
                 placeholder="Enter Password"
                 className="w-full h-12 rounded-max border border-primary px-3 bg-bg focus:outline-none"
@@ -141,8 +242,8 @@ export const Auth = () => {
               }}
               loop={true}
             >
-              {authData.map((a) => (
-                <SwiperSlide>
+              {authData.map((a, index) => (
+                <SwiperSlide key={index}>
                   <div className="flex flex-col items-center gap-3">
                     <img src={a.img} alt="image" />
                     <p className="text-center w-3/4">{a.title}</p>
