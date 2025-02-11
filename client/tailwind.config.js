@@ -6,7 +6,7 @@ export default {
       colors: {
         primary: "#010101", // Custom color
         secondary: {
-          100: "#F6FAF4",
+          100: "#EDFDE5",
           200: "#A0D195",
         },
         bg : "#f9f9f9",
@@ -16,6 +16,9 @@ export default {
         md: "12px", // Custom border-radius
         lg: "20px", // Custom border-radius
         max: "100px", // Custom border-radius
+      },
+      fontFamily: {
+        reospec: ['reospec', 'Poppins']
       },
       fontSize: {
         'xs': ['12px', { lineHeight: '16px' }],  // Extra small

@@ -1,7 +1,11 @@
 import React from 'react'
+import { Navbar } from '../../Navbar/Navbar'
 
 export const Event = () => {
   return (
-    <div>Testing Github...</div>
+    <div>
+      <Navbar />
+      <div>Code from here</div>
+    </div>
   )
 }
