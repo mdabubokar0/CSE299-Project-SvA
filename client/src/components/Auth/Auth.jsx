@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 
 export const Auth = () => {
   const navigate = useNavigate();
-  const [active, setActive] = useState("register");
+  const [active, setActive] = useState("login");
   const [registerData, setRegisterData] = useState({
     name: "",
     username: "",

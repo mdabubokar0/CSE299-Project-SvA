@@ -6,7 +6,7 @@ export default {
       colors: {
         primary: "#010101", // Custom color
         secondary: {
-          100: "#EDFDE5",
+          100: "#EFF0F6",
           200: "#A0D195",
         },
         bg : "#f9f9f9",

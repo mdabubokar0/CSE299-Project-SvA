@@ -1,0 +1,27 @@
+[
+  {
+    "id": 1,
+    "title": "Dashboard",
+    "link": "/dashboard"
+  },
+  {
+    "id": 2,
+    "title": "Users",
+    "link": "/Users"
+  },
+  {
+    "id": 3,
+    "title": "Events",
+    "link": "/Events"
+  },
+  {
+    "id": 4,
+    "title": "Hire",
+    "link": "/hire"
+  },
+  {
+    "id": 5,
+    "title": "Settings",
+    "link": "/settings"
+  }
+]

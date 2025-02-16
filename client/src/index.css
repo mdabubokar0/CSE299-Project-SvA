@@ -21,5 +21,9 @@
 
 body {
   font-family: "Poppins", sans-serif;
-  background-color: #f9f6ee;
+  background-color: white;
+}
+
+.h {
+  height: calc(100vh - 24px);
 }
