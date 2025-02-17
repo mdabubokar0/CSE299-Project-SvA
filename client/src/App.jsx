@@ -7,6 +7,7 @@ import { Forum } from "./components/Pages/Forum/Forum"
 import { Calculator } from "./components/Pages/Calculator/Calculator"
 import { Ticket } from "./components/Pages/Ticket/Ticket"
 import { Event } from "./components/Pages/Event/Event"
+import { CreateEvent } from "./components/Pages/Event/CreateEvent"
 import { Feedback } from "./components/Pages/Feedback/Feedback"
 import { Suggestions } from "./components/Pages/Suggestions/Suggestions"
 import { Photographers } from "./components/Pages/Photographers/Photographers"
@@ -24,6 +25,7 @@ function App() {
         <Route exact path="/calculator" element={<Calculator />} />
         <Route exact path="/ticket" element={<Ticket />} />
         <Route exact path="/event" element={<Event />} />
+        <Route exact path="/create-event" element={<CreateEvent />} />
         <Route exact path="/feedback" element={<Feedback />} />
         <Route exact path="/suggestions" element={<Suggestions />} />
         <Route exact path="/photographers" element={<Photographers />} />

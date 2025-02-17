@@ -2,7 +2,9 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import userRoutes from "./routes/userRoutes.js"; // Import user routes
-import { protectRoute } from "./middleware/authMiddleware.js";
+import eventRoutes from "./routes/eventRoutes.js";
+import path from "path";
+import { fileURLToPath } from "url";
 
 dotenv.config();
 
@@ -17,14 +19,15 @@ app.use(
   })
 );
 
-// ✅ Routes
-app.use("/api", userRoutes);
-app.use("/profile", protectRoute, (req, res) => {
-  const userId = req.user.id;
-  console.log(userId); // userId should now be accessible
-  res.json({ userId });
-});
+// Get __dirname equivalent in ES module
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
+// Serve Static Files (For Uploaded Images)
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+app.use("/api", userRoutes); // ✅ Routes
+app.use("/event", eventRoutes); // Event Routes
 
 // ✅ Start Server
 const PORT = process.env.PORT || 8081;

@@ -3,8 +3,9 @@ import { Sidebar } from "../../Sidebar/Sidebar";
 import { Avatar } from "../../Profile/Avatar";
 import { Doughnut } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
-import axios from "axios"; 
+import axios from "axios";
 import { Table } from "antd";
+import Card from "./Card";
 
 // Register necessary components
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -47,7 +48,7 @@ export const Dashboard = () => {
 
   useEffect(() => {
     fetchCounts();
-    fetchUserData()
+    fetchUserData();
   }, [token]);
 
   const data = {
@@ -101,36 +102,20 @@ export const Dashboard = () => {
         </div>
         <div className="flex items-center justify-between w-full">
           <div className="mt-3 flex flex-col gap-3">
-            <div className="text-lg font-medium w-60 h-28 bg-secondary-100 p-3 rounded-md shadow-lg flex flex-col">
-              Organizers
-              <span className="text-2xl text-center">{organizers}</span>
-            </div>
-            <div className="text-lg font-medium w-60 h-28 bg-secondary-100 p-3 rounded-md shadow-lg flex flex-col">
-              Photographers
-              <span className="text-2xl text-center">{photographers}</span>
-            </div>
-            <div className="text-lg font-medium w-60 h-28 bg-secondary-100 p-3 rounded-md shadow-lg flex flex-col">
-              Attendees
-              <span className="text-2xl text-center">{attendees}</span>
-            </div>
+            <Card title="Organizers" count={organizers} />
+            <Card title="Photographers" count={photographers} />
+            <Card title="Attendees" count={attendees} />
           </div>
           <div>
             <Doughnut data={data} />
           </div>
           <div className="mt-3 flex flex-col gap-3">
-            <div className="text-lg text-end font-medium w-60 h-28 bg-secondary-100 p-3 rounded-md shadow-lg flex flex-col">
-              Male <span className="text-2xl text-center">{attendees}</span>
-            </div>
-            <div className="text-lg text-end font-medium w-60 h-28 bg-secondary-100 p-3 rounded-md shadow-lg flex flex-col">
-              Female <span className="text-2xl text-center">{attendees}</span>
-            </div>
-            <div className="text-lg text-end font-medium w-60 h-28 bg-secondary-100 p-3 rounded-md shadow-lg flex flex-col">
-              Attendees
-              <span className="text-2xl text-center">{attendees}</span>
-            </div>
+            <Card title="Male" count={organizers} />
+            <Card title="Female" count={organizers} />
+            <Card title="Events" count="0" />
           </div>
         </div>
-        {/* ✅ Ant Design Table */}
+        {/* Table */}
         <div className="mt-3">
           <h1 className="text-xl font-medium mb-3">Recent Users</h1>
           <Table columns={columns} dataSource={userData} rowKey="id" />
