@@ -62,7 +62,7 @@ export const Calculator = () => {
   return (
     <div>
       <Navbar />
-      <div className="bg-gray-900 min-h-screen p-4 text-gray-100 flex flex-col items-center">
+      <div className="min-h-screen p-4 text-gray-100 flex flex-col items-center">
         <div className="bg-green-300 text-black text-center py-4 rounded-xl text-2xl font-bold w-full max-w-4xl">
           Budget Calculator
         </div>

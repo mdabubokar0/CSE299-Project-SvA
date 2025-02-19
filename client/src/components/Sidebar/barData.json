@@ -12,12 +12,12 @@
   {
     "id": 3,
     "title": "Events",
-    "link": "/Events"
+    "link": "/event"
   },
   {
     "id": 4,
-    "title": "Hire",
-    "link": "/hire"
+    "title": "Hiring",
+    "link": "/hiring"
   },
   {
     "id": 5,
