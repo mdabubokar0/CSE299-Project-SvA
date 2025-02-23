@@ -7,7 +7,7 @@ export const Sidebar = () => {
   const location = useLocation();
   const [active, setActive] = useState(location.pathname);
   const role = localStorage.getItem("role");
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const handleActive = (link) => {
     setActive(link);

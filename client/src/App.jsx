@@ -11,6 +11,7 @@ import { CreateEvent } from "./components/Pages/Event/CreateEvent"
 import { Feedback } from "./components/Pages/Feedback/Feedback"
 import { Suggestions } from "./components/Pages/Suggestions/Suggestions"
 import { Photographers } from "./components/Pages/Photographers/Photographers"
+import { Users } from "./components/Pages/Users/Users"
 
 function App() {
 
@@ -29,6 +30,7 @@ function App() {
         <Route exact path="/feedback" element={<Feedback />} />
         <Route exact path="/suggestions" element={<Suggestions />} />
         <Route exact path="/photographers" element={<Photographers />} />
+        <Route exact path="/users" element={<Users />} />
       </Routes>
     </Main>
   )

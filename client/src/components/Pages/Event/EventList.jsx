@@ -41,7 +41,10 @@ export const EventList = () => {
                 />
               }
             >
-              <Card.Meta title={event.title} description={`৳ ${event.ticket}`} />
+              <Card.Meta
+                title={event.title}
+                description={`৳ ${event.ticket}`}
+              />
             </Card>
           </Col>
         ))}

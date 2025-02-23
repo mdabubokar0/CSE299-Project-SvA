@@ -1,6 +1,7 @@
 
 import React, { useState } from "react";
 import { Navbar } from "../../Navbar/Navbar";
+import Title from "../../Props/Title";
 
 export const Calculator = () => {
   const [items, setItems] = useState([
@@ -62,10 +63,8 @@ export const Calculator = () => {
   return (
     <div>
       <Navbar />
-      <div className="min-h-screen p-4 text-gray-100 flex flex-col items-center">
-        <div className="bg-green-300 text-black text-center py-4 rounded-xl text-2xl font-bold w-full max-w-4xl">
-          Budget Calculator
-        </div>
+      <div className="min-h-screen p-4 flex flex-col items-center">
+        <Title title="Calculator" subtitle="Calculate your event expenses" />
         
         {/* Horizontal Categories */}
         <div className="flex justify-center gap-4 mt-6 w-full max-w-4xl overflow-x-auto p-2">

@@ -100,7 +100,7 @@ export const Dashboard = () => {
     ],
   };
 
-  // ✅ Define table columns
+  // Define table columns
   const columns = [
     {
       title: "Name",
@@ -116,12 +116,6 @@ export const Dashboard = () => {
       title: "Role",
       dataIndex: "role",
       key: "role",
-      filters: [
-        { text: "Organizer", value: "organizer" },
-        { text: "Photographer", value: "photographer" },
-        { text: "Attendee", value: "attendee" },
-      ],
-      onFilter: (value, record) => record.role === value,
     },
   ];
 
