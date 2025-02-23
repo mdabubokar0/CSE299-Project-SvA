@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Navbar } from "../../Navbar/Navbar";
 import Title from "../../Props/Title";
@@ -33,6 +32,18 @@ export const Calculator = () => {
       { brand: "Detos", price: 25, img: "/img/detos.png" },
       { brand: "Chocolate_bar", price: 20, img: "/img/chocolate_bar.png" },
     ],
+    "Venue Cost": [
+      { brand: "Dhaka Regency", price: 10000, img: "/img/regency.png" },
+      { brand: "Pan Pacific", price: 12000, img: "/img/pan_pacific.jpg" },
+      { brand: "Radisson", price: 15000, img: "/img/radison.jpg" },
+      { brand: "Westin", price: 20000, img: "/img/westin.jpg" },
+    ],
+    "Transportation": [
+      { brand: "Bus", price: 8000, img: "/img/bus_pic.png" },
+      { brand: "Car", price: 3000, img: "/img/premio.jpg" },
+      { brand: "Bike", price: 500, img: "/img/bike.jpg" },
+    ],
+
   };
 
   const [selectedCategory, setSelectedCategory] = useState(null);
@@ -108,7 +119,7 @@ export const Calculator = () => {
             </thead>
             <tbody>
               {items.map((item, index) => (
-                <tr key={index} className="text-red-500 border-t border-gray-600">
+                <tr key={index} className="text-[#F7F7FA] border-t border-gray-600">
                   <td className="py-2 px-4">{item.name}</td>
                   <td className="py-2 px-4">
                     <input
