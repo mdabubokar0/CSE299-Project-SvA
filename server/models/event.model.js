@@ -31,3 +31,23 @@ export const getEvents = async () => {
     throw error; // Propagate error
   }
 };
+
+// Function to get a single event by ID
+export const getEventById = async (id) => {
+  try {
+    const result = await pool.query(
+      "SELECT * FROM event_info WHERE id = $1",
+      [id]
+    );
+
+    // If no event found, return null
+    if (result.rows.length === 0) {
+      return null;
+    }
+
+    return result.rows[0];
+  } catch (error) {
+    console.error("Error fetching event by ID:", error.message);
+    throw error; // Propagate error
+  }
+};

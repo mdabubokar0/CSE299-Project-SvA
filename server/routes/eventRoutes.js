@@ -3,7 +3,7 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
-import { createEvent, getEvents } from "../models/event.model.js";
+import { createEvent, getEvents, getEventById } from "../models/event.model.js";
 
 const router = express.Router();
 
@@ -41,8 +41,6 @@ router.post("/create", upload.single("thumbnail"), async (req, res) => {
 
     const thumbnailUrl = `/uploads/${req.file.filename}`; // Local file path
 
-    console.log("📸 Uploaded file:", req.file); // Debugging
-
     const newEvent = await createEvent(
       title,
       description,
@@ -53,11 +51,9 @@ router.post("/create", upload.single("thumbnail"), async (req, res) => {
       ticket
     );
 
-    res
-      .status(201)
-      .json({ message: "Event created successfully", event: newEvent });
+    res.status(201).json({ message: "Event created successfully", event: newEvent });
   } catch (error) {
-    console.error("❌ Error creating event:", error.message);
+    console.error("Error creating event:", error.message);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
@@ -68,8 +64,25 @@ router.get("/list", async (req, res) => {
     const events = await getEvents(); // Fetch events from the model
     res.json(events);
   } catch (error) {
-    console.error("❌ Error fetching events:", error.message);
+    console.error("Error fetching events:", error.message);
     res.status(500).json({ error: "Failed to fetch events" });
+  }
+});
+
+// Route to fetch a single event by its ID
+router.get("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const event = await getEventById(id); // Fetch single event by ID
+
+    if (!event) {
+      return res.status(404).json({ error: "Event not found" });
+    }
+
+    res.json(event);
+  } catch (error) {
+    console.error("Error fetching event:", error.message);
+    res.status(500).json({ error: "Failed to fetch event" });
   }
 });
 
