@@ -9,7 +9,6 @@ import { Ticket } from "./components/Pages/Ticket/Ticket"
 import { Event } from "./components/Pages/Event/Event"
 import { CreateEvent } from "./components/Pages/Event/CreateEvent"
 import { Feedback } from "./components/Pages/Feedback/Feedback"
-import { Suggestions } from "./components/Pages/Suggestions/Suggestions"
 import { Photographers } from "./components/Pages/Photographers/Photographers"
 import { Users } from "./components/Pages/Users/Users"
 
@@ -28,7 +27,6 @@ function App() {
         <Route exact path="/event" element={<Event />} />
         <Route exact path="/create-event" element={<CreateEvent />} />
         <Route exact path="/feedback" element={<Feedback />} />
-        <Route exact path="/suggestions" element={<Suggestions />} />
         <Route exact path="/photographers" element={<Photographers />} />
         <Route exact path="/users" element={<Users />} />
       </Routes>

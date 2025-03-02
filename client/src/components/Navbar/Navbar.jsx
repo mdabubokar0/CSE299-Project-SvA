@@ -7,7 +7,7 @@ export const Navbar = () => {
   const token = localStorage.getItem("token");
 
   return (
-    <div className="flex items-center justify-center font-medium sticky top-0 z-50">
+    <div className="flex items-center justify-center font-medium sticky top-0 z-50 bg-white">
       {/* Navbar container with background color and height */}
       <div className="bg-secondary-100 h-[70px] flex items-center gap-10 rounded-b-md px-5">
         <div className="flex items-center gap-10">

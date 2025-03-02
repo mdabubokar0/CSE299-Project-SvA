@@ -6,21 +6,16 @@
   },
   {
     "id": 2,
-    "title": "Suggestions",
-    "link": "/suggestions"
-  },
-  {
-    "id": 3,
     "title": "Calculator",
     "link": "/calculator"
   },
   {
-    "id": 4,
+    "id": 3,
     "title": "Forum",
     "link": "/forum"
   },
   {
-    "id": 5,
+    "id": 4,
     "title": "Photographers",
     "link": "/photographers"
   }

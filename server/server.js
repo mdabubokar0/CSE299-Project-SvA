@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import userRoutes from "./routes/userRoutes.js"; // Import user routes
 import eventRoutes from "./routes/eventRoutes.js";
+import discussionRoutes from "./routes/discussionRoutes.js";
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -26,8 +27,9 @@ const __dirname = path.dirname(__filename);
 // Serve Static Files (For Uploaded Images)
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-app.use("/api", userRoutes); // ✅ Routes
+app.use("/api", userRoutes); // Routes
 app.use("/event", eventRoutes); // Event Routes
+app.use("/api/discussions", discussionRoutes); // Discussion Routes
 
 // ✅ Start Server
 const PORT = process.env.PORT || 8081;

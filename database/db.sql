@@ -18,3 +18,19 @@ CREATE TABLE event_info (
     capacity VARCHAR(100) NOT NULL,
     ticket INT NOT NULL
 );
+
+-- Create table for discussion
+CREATE TABLE discussion_info (
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(id) ON DELETE CASCADE,
+    title VARCHAR(255) NOT NULL,
+    description TEXT NOT NULL
+);
+
+-- Create table for discussion comment
+CREATE TABLE discussion_comment (
+    id SERIAL PRIMARY KEY,
+    discussion_id INT REFERENCES discussion_info(id) ON DELETE CASCADE,
+    user_id INT REFERENCES users(id) ON DELETE CASCADE,
+    comment TEXT NOT NULL
+);
