@@ -107,7 +107,7 @@ export const Forum = () => {
           title="FORUM"
           subtitle="Share your thoughts with the community."
         />
-        <div className="w-[700px] m-auto">
+        <div className="w-[800px] m-auto">
           <div className="flex items-center gap-1 mt-10">
             <Input
               placeholder="Search discussions..."

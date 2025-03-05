@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { Navbar } from "../../Navbar/Navbar";
 import Title from "../../Props/Title";
+import { Button, Modal, Input, Table } from "antd";
+import { PlusOutlined } from "@ant-design/icons";
 
 export const Calculator = () => {
   const [items, setItems] = useState([
-    { name: "Water", quantity: "", price: "" },
-    { name: "Juice & Drinks", quantity: "", price: "" },
+    { name: "Drinks", quantity: "", price: "" },
     { name: "Snacks", quantity: "", price: "" },
     { name: "Venue Cost", quantity: "", price: "" },
     { name: "Transportation", quantity: "", price: "" },
@@ -13,24 +14,22 @@ export const Calculator = () => {
   ]);
 
   const brandSuggestions = {
-    "Water": [
+    Drinks: [
       { brand: "Aquafina", price: 20, img: "/img/aquafina.png" },
       { brand: "Kinley", price: 20, img: "/img/kinley.png" },
       { brand: "Mum", price: 15, img: "/img/mum.png" },
       { brand: "Fresh", price: 120, img: "/img/fresh.png" },
-    ],
-    "Juice & Drinks": [
       { brand: "Fruitika", price: 30, img: "/img/fruitika.png" },
       { brand: "Drinko", price: 30, img: "/img/drinko.png" },
       { brand: "Bruvana", price: 35, img: "/img/bruvana.png" },
       { brand: "Colacola", price: 25, img: "/img/colacola.png" },
       { brand: "Fanta", price: 65, img: "/img/fanta.png" },
     ],
-    "Snacks": [
+    Snacks: [
       { brand: "Muffin", price: 10, img: "/img/muffin.png" },
       { brand: "Kurkure", price: 20, img: "/img/kurkure.png" },
       { brand: "Detos", price: 25, img: "/img/detos.png" },
-      { brand: "Chocolate_bar", price: 20, img: "/img/chocolate_bar.png" },
+      { brand: "Chocolate", price: 20, img: "/img/chocolate_bar.png" },
     ],
     "Venue Cost": [
       { brand: "Dhaka Regency", price: 10000, img: "/img/regency.png" },
@@ -38,16 +37,17 @@ export const Calculator = () => {
       { brand: "Radisson", price: 15000, img: "/img/radison.jpg" },
       { brand: "Westin", price: 20000, img: "/img/westin.jpg" },
     ],
-    "Transportation": [
+    Transportation: [
       { brand: "Bus", price: 8000, img: "/img/bus_pic.png" },
       { brand: "Car", price: 3000, img: "/img/premio.jpg" },
       { brand: "Bike", price: 500, img: "/img/bike.jpg" },
     ],
-
   };
 
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [total, setTotal] = useState(0);
+  const [showModal, setShowModal] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(null);
 
   const handleInputChange = (index, field, value) => {
     const newItems = [...items];
@@ -55,96 +55,129 @@ export const Calculator = () => {
     setItems(newItems);
   };
 
-  const handleCategoryClick = (category) => {
-    setSelectedCategory(category);
-  };
-
-  const handleBrandSelection = (index, price) => {
+  const handleBrandSelection = (price) => {
     const newItems = [...items];
-    newItems[index].price = price;
+    newItems[currentIndex].price = price;
     setItems(newItems);
+    setShowModal(false);
     setSelectedCategory(null);
   };
 
   const calculateTotal = () => {
-    const totalAmount = items.reduce((sum, item) => sum + (parseFloat(item.quantity) * parseFloat(item.price) || 0), 0);
+    const totalAmount = items.reduce(
+      (sum, item) =>
+        sum + (parseFloat(item.quantity) * parseFloat(item.price) || 0),
+      0
+    );
     setTotal(totalAmount);
   };
+
+  const handleAddClick = (index) => {
+    setCurrentIndex(index);
+    setSelectedCategory(items[index].name);
+    setShowModal(true);
+  };
+
+  const columns = [
+    {
+      title: "Product",
+      dataIndex: "name",
+      key: "name",
+    },
+    {
+      title: "Quantity",
+      dataIndex: "quantity",
+      key: "quantity",
+      render: (text, record, index) => (
+        <Input
+          type="number"
+          value={text}
+          onChange={(e) => handleInputChange(index, "quantity", e.target.value)}
+          style={{ backgroundColor: "#f0f2f5", width: "100%" }}
+        />
+      ),
+    },
+    {
+      title: "Price (tk)",
+      dataIndex: "price",
+      key: "price",
+      render: (text) => (
+        <Input
+          type="number"
+          value={text}
+          readOnly
+          style={{ backgroundColor: "#f0f2f5" }}
+        />
+      ),
+    },
+    {
+      title: "Add",
+      key: "add",
+      render: (text, record, index) => (
+        <Button
+          icon={<PlusOutlined />}
+          onClick={() => handleAddClick(index)}
+          style={{ backgroundColor: "#1890ff", color: "white" }}
+        >
+          Add
+        </Button>
+      ),
+    },
+  ];
 
   return (
     <div>
       <Navbar />
-      <div className="min-h-screen p-4 flex flex-col items-center">
+      <div className="p-4 flex flex-col items-center">
         <Title title="Calculator" subtitle="Calculate your event expenses" />
-        
-        {/* Horizontal Categories */}
-        <div className="flex justify-center gap-4 mt-6 w-full max-w-4xl overflow-x-auto p-2">
-          {items.map((item, index) => (
-            <button
-              key={index}
-              className="bg-green-200 text-black py-2 px-4 rounded-lg text-lg"
-              onClick={() => handleCategoryClick(item.name)}
-            >
-              {item.name}
-            </button>
-          ))}
-        </div>
 
-        {/* Horizontal Brand Suggestions */}
-        {selectedCategory && brandSuggestions[selectedCategory] && (
-          <div className="bg-gray-800 p-4 rounded-lg mt-4 text-white shadow-lg w-full max-w-4xl overflow-x-auto flex gap-4">
-            {brandSuggestions[selectedCategory].map((brand, index) => (
-              <div
-                key={index}
-                className="p-4 cursor-pointer hover:bg-gray-700 flex flex-col items-center border-2 border-gray-500 rounded-lg shadow-md transform transition duration-300 hover:scale-105"
-                onClick={() => handleBrandSelection(items.findIndex(item => item.name === selectedCategory), brand.price)}
-              >
-                <img src={brand.img} alt={brand.brand} className="w-24 h-25 object-cover rounded-lg shadow-lg" />
-                <p className="mt-2 font-semibold text-lg">{brand.brand}</p>
-                <p className="text-sm text-gray-300">{brand.price} tk</p>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* Product Table */}
-        <div className="bg-gray-800 p-4 rounded-lg w-full max-w-4xl mt-6">
-          <table className="w-full border-collapse">
-            <thead>
-              <tr className="bg-green-500 text-black">
-                <th className="py-2 px-4">Product</th>
-                <th className="py-2 px-4">Quantity</th>
-                <th className="py-2 px-4">Price (tk)</th>
-              </tr>
-            </thead>
-            <tbody>
-              {items.map((item, index) => (
-                <tr key={index} className="text-[#F7F7FA] border-t border-gray-600">
-                  <td className="py-2 px-4">{item.name}</td>
-                  <td className="py-2 px-4">
-                    <input
-                      type="number"
-                      className="bg-gray-700 text-white p-1 rounded w-full"
-                      value={item.quantity}
-                      onChange={(e) => handleInputChange(index, "quantity", e.target.value)}
-                    />
-                  </td>
-                  <td className="py-2 px-4">
-                    <input
-                      type="number"
-                      className="bg-gray-700 text-white p-1 rounded w-full"
-                      value={item.price}
-                      readOnly
-                    />
-                  </td>
-                </tr>
+        {/* Modal for Brand Suggestions */}
+        <Modal
+          title={`Select a Brand for ${selectedCategory}`}
+          visible={showModal}
+          onCancel={() => setShowModal(false)}
+          footer={null}
+          width={600}
+          bodyStyle={{ height: "400px", overflowY: "scroll" }} // Allow scrolling vertically
+        >
+          <div className="grid grid-cols-4 gap-4 overflow-y-auto">
+            {brandSuggestions[selectedCategory] &&
+              brandSuggestions[selectedCategory].map((brand, index) => (
+                <div
+                  key={index}
+                  className="p-4 cursor-pointer hover:bg-gray-700 flex flex-col items-center border-2 border-gray-500 rounded-lg shadow-md transform transition duration-300"
+                  onClick={() => handleBrandSelection(brand.price)}
+                  style={{
+                    height: "200px",
+                    display: "flex",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <img
+                    src={brand.img}
+                    alt={brand.brand}
+                    className="w-24 h-24 object-cover rounded-lg shadow-lg"
+                  />
+                  <p className="mt-2 font-semibold text-lg">{brand.brand}</p>
+                  <p className="text-sm text-gray-300">{brand.price} tk</p>
+                </div>
               ))}
-            </tbody>
-          </table>
-          <button className="bg-green-500 text-black py-2 px-4 rounded-lg mt-4" onClick={calculateTotal}>
-            Calculate Total
-          </button>
-          <div className="text-xl font-bold text-white mt-2">Total: {total} tk</div>
+          </div>
+        </Modal>
+
+        {/* Ant Design Table */}
+        <div className="text-primary p-4 rounded-lg w-[800px] mt-5">
+          <Table
+            columns={columns}
+            dataSource={items}
+            rowKey="name"
+            pagination={false}
+            bordered
+          />
+          <Button className="mt-4 w-full" onClick={calculateTotal}>
+            Calculate
+          </Button>
+          <div className="text-xl font-semibold mt-2">Total: {total} BDT</div>
         </div>
       </div>
     </div>
