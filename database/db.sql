@@ -34,3 +34,16 @@ CREATE TABLE discussion_comment (
     user_id INT REFERENCES users(id) ON DELETE CASCADE,
     comment TEXT NOT NULL
 );
+
+-- Create table for photographers
+CREATE TABLE photographer (
+    nid INT PRIMARY KEY, 
+    id INT UNIQUE,  
+    picture TEXT,  
+    bio VARCHAR(250),  
+    contact_no VARCHAR(11),  
+    experience VARCHAR(250),  
+    camera_model VARCHAR(100), 
+    hourly_charge DECIMAL(10,2),
+    FOREIGN KEY (id) REFERENCES users(id) ON DELETE CASCADE
+)
