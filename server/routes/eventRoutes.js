@@ -33,10 +33,14 @@ const upload = multer({ storage });
 // Route to Create an Event with Image Upload
 router.post("/create", upload.single("thumbnail"), async (req, res) => {
   try {
-    const { title, description, venue, date, capacity, ticket } = req.body;
+    const { title, description, venue, date, capacity, ticket, category } = req.body;
 
     if (!req.file) {
       return res.status(400).json({ error: "Thumbnail is required" });
+    }
+
+    if (!category) {
+      return res.status(400).json({ error: "Category is required" });
     }
 
     const thumbnailUrl = `/uploads/${req.file.filename}`; // Local file path
@@ -48,7 +52,8 @@ router.post("/create", upload.single("thumbnail"), async (req, res) => {
       venue,
       date,
       capacity,
-      ticket
+      ticket,
+      category // Pass category to the model
     );
 
     res.status(201).json({ message: "Event created successfully", event: newEvent });
@@ -57,6 +62,7 @@ router.post("/create", upload.single("thumbnail"), async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
 
 // Route to fetch all events
 router.get("/list", async (req, res) => {
@@ -88,3 +94,19 @@ router.get("/:id", async (req, res) => {
 
 // Export Router
 export default router;
+
+// Route to search events by title
+router.get("/search", async (req, res) => {
+  try {
+    const { query } = req.query;
+    if (!query) {
+      return res.status(400).json({ message: "Search query is required." });
+    }
+
+    const events = await searchEventsByTitle(query);
+    res.json(events);
+  } catch (error) {
+    console.error("Error searching events:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});

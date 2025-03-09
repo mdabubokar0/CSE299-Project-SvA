@@ -4,6 +4,7 @@ import cors from "cors";
 import userRoutes from "./routes/userRoutes.js"; // Import user routes
 import eventRoutes from "./routes/eventRoutes.js";
 import discussionRoutes from "./routes/discussionRoutes.js";
+import photographerRoutes from "./routes/photographerRoutes.js";
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -30,6 +31,7 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/api", userRoutes); // Routes
 app.use("/event", eventRoutes); // Event Routes
 app.use("/api/discussions", discussionRoutes); // Discussion Routes
+app.use("/photographer", photographerRoutes); // Photographer Routes
 
 // ✅ Start Server
 const PORT = process.env.PORT || 8081;

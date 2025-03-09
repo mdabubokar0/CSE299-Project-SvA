@@ -9,6 +9,7 @@ import { Ticket } from "./components/Pages/Ticket/Ticket"
 import { CreateEvent } from "./components/Pages/Event/CreateEvent"
 import { Feedback } from "./components/Pages/Feedback/Feedback"
 import { Photographers } from "./components/Pages/Photographers/Photographers"
+import { CreatePhotographer } from "./components/Pages/Photographers/CreatePhotographer"
 import { Users } from "./components/Pages/Users/Users"
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
         <Route exact path="/create-event" element={<CreateEvent />} />
         <Route exact path="/feedback" element={<Feedback />} />
         <Route exact path="/photographers" element={<Photographers />} />
+        <Route exact path="/create-photographer" element={<CreatePhotographer />} />
         <Route exact path="/users" element={<Users />} />
       </Routes>
     </Main>

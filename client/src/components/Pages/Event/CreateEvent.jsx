@@ -8,6 +8,7 @@ import {
   InputNumber,
   message,
   Card,
+  Select, // Import Select component
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import axios from "axios";
@@ -39,6 +40,7 @@ export const CreateEvent = () => {
     formData.append("capacity", values.capacity);
     formData.append("ticket", values.ticket);
     formData.append("thumbnail", fileList[0].originFileObj); // Attach file
+    formData.append("category", values.category); // Attach category
 
     try {
       const response = await axios.post(
@@ -140,6 +142,20 @@ export const CreateEvent = () => {
                 />
               </Form.Item>
             </div>
+
+            {/* Category Select */}
+            <Form.Item
+              label="Category"
+              name="category"
+              rules={[{ required: true, message: "Please select a category" }]}
+            >
+              <Select placeholder="Select event category">
+                <Select.Option value="Concert">Concert</Select.Option>
+                <Select.Option value="Gaming">Gaming</Select.Option>
+                <Select.Option value="Anime">Anime</Select.Option>
+                <Select.Option value="Workshop">Workshop</Select.Option>
+              </Select>
+            </Form.Item>
 
             <Form.Item
               label="Event Thumbnail"
