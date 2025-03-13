@@ -2,15 +2,15 @@ import React, { useState } from "react";
 import { Navbar } from "../../Navbar/Navbar";
 import Title from "../../Props/Title";
 import { Button, Modal, Input, Table } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
+import { PlusOutlined, EditOutlined } from "@ant-design/icons";
 
 export const Calculator = () => {
   const [items, setItems] = useState([
-    { name: "Drinks", quantity: "", price: "" },
-    { name: "Snacks", quantity: "", price: "" },
-    { name: "Venue Cost", quantity: "", price: "" },
-    { name: "Transportation", quantity: "", price: "" },
-    { name: "Decoration", quantity: "", price: "" },
+    { name: "Drinks", quantity: "", price: "", selectedBrand: null },
+    { name: "Snacks", quantity: "", price: "", selectedBrand: null },
+    { name: "Venue Cost", quantity: "", price: "", selectedBrand: null },
+    { name: "Transportation", quantity: "", price: "", selectedBrand: null },
+    { name: "Decoration", quantity: "", price: "", selectedBrand: null },
   ]);
 
   const brandSuggestions = {
@@ -55,9 +55,10 @@ export const Calculator = () => {
     setItems(newItems);
   };
 
-  const handleBrandSelection = (price) => {
+  const handleBrandSelection = (price, brand, img) => {
     const newItems = [...items];
     newItems[currentIndex].price = price;
+    newItems[currentIndex].selectedBrand = { brand, img }; // Store the selected brand
     setItems(newItems);
     setShowModal(false);
     setSelectedCategory(null);
@@ -98,7 +99,7 @@ export const Calculator = () => {
       ),
     },
     {
-      title: "Price (tk)",
+      title: "Price (BDT)",
       dataIndex: "price",
       key: "price",
       render: (text) => (
@@ -111,16 +112,33 @@ export const Calculator = () => {
       ),
     },
     {
-      title: "Add",
-      key: "add",
+      title: "Brand",
+      key: "brand",
       render: (text, record, index) => (
-        <Button
-          icon={<PlusOutlined />}
-          onClick={() => handleAddClick(index)}
-          style={{ backgroundColor: "#1890ff", color: "white" }}
-        >
-          Add
-        </Button>
+        <div>
+          {record.selectedBrand ? (
+            <div
+              className="flex flex-col items-center"
+              onClick={() => handleAddClick(index)} // Allow brand change when clicked
+              style={{ cursor: "pointer" }}
+            >
+              <img
+                src={record.selectedBrand.img}
+                alt={record.selectedBrand.brand}
+                style={{ width: "30px", height: "30px" }}
+              />
+              <span>{record.selectedBrand.brand}</span>
+            </div>
+          ) : (
+            <Button
+              icon={<PlusOutlined />}
+              onClick={() => handleAddClick(index)}
+              style={{ backgroundColor: "#1890ff", color: "white" }}
+            >
+              Add
+            </Button>
+          )}
+        </div>
       ),
     },
   ];
@@ -145,8 +163,10 @@ export const Calculator = () => {
               brandSuggestions[selectedCategory].map((brand, index) => (
                 <div
                   key={index}
-                  className="p-4 cursor-pointer hover:bg-gray-700 flex flex-col items-center border-2 border-gray-500 rounded-lg shadow-md transform transition duration-300"
-                  onClick={() => handleBrandSelection(brand.price)}
+                  className="p-4 cursor-pointer hover:bg-secondary-100 flex flex-col items-center border-2 border-gray-500 rounded-lg shadow-md transform transition duration-300"
+                  onClick={() =>
+                    handleBrandSelection(brand.price, brand.brand, brand.img)
+                  }
                   style={{
                     height: "200px",
                     display: "flex",

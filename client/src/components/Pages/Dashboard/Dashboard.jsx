@@ -123,29 +123,34 @@ export const Dashboard = () => {
           role === "photographer") && (
           <div>
             <div className="flex flex-col w-full">
-              {/* Top Cards */}
-              <div className="mt-3 flex justify-between">
+              {/* Cards */}
+              <div className="mt-3 flex gap-3">
                 {role === "admin" && (
                   <>
                     <Card title="Organizers" count={organizers} />
-                    <Card title="Photographers" count={photographers} right="true" />
+                    <Card title="Photographers" count={photographers} />
+                    <Card title="Attendees" count={attendees} />
+                    <Card title="Events" count="5" />
                   </>
                 )}
                 {role === "organizer" && (
                   <>
                     <Card title="Events Created" count={organizers} />
-                    <Card title="Events Attended" count={organizers} right="true" />
+                    <Card title="Hired" count={organizers} />
+                    <Card title="Tickets Sold" count={organizers} />
                   </>
                 )}
                 {role === "photographer" && (
                   <>
                     <Card title="Got Hired" count={organizers} />
-                    <Card title="Event Attended" count={photographers} right="true" />
+                    <Card title="Rejected" count={organizers} />
+                    <Card title="Charge" count="10000" />
                   </>
                 )}
               </div>
 
               {/* Line Chart for All Roles */}
+              <div className="w-full bg-secondary-100 rounded-md shadow-lg mt-3 pb-5">
               <div
                 className="m-auto mt-5"
                 style={{ width: "600px", height: "300px" }}
@@ -164,31 +169,6 @@ export const Dashboard = () => {
                   }}
                 />
               </div>
-
-              {/* Bottom Cards */}
-              <div className="mt-3 flex justify-between">
-                {role === "admin" && (
-                  <>
-                    <Card title="Events" count="5" />
-                    <Card title="Attendees" count={attendees} right="true" />
-                  </>
-                )}
-                {role === "organizer" && (
-                  <>
-                    <Card title="Hired" count={organizers} />
-                    <Card
-                      title="Tickets Sold"
-                      count={organizers}
-                      right="true"
-                    />
-                  </>
-                )}
-                {role === "photographer" && (
-                  <>
-                    <Card title="Rejected" count={organizers} />
-                    <Card title="Charge" count="10000" right="true" />
-                  </>
-                )}
               </div>
             </div>
           </div>

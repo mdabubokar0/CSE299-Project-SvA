@@ -1,10 +1,19 @@
 import express from "express";
-import { pool } from "../config/db.js";
 import { protectRoute } from "../middleware/authMiddleware.js";
+import {
+  createDiscussion,
+  getAllDiscussions,
+  searchDiscussions,
+  discussionExists,
+  deleteDiscussion,
+  addComment,
+  getDiscussionComments,
+  updateDiscussion,
+} from "../models/discussion.model.js";
 
 const router = express.Router();
 
-// Create Discussion
+// ✅ Create Discussion
 router.post("/create", protectRoute, async (req, res) => {
   try {
     const { title, description } = req.body;
@@ -14,110 +23,87 @@ router.post("/create", protectRoute, async (req, res) => {
         .json({ message: "Title and description are required." });
     }
 
-    const user_id = req.user.id;
-    const result = await pool.query(
-      "INSERT INTO discussion_info (user_id, title, description) VALUES ($1, $2, $3) RETURNING *",
-      [user_id, title, description]
-    );
-
-    res.status(201).json(result.rows[0]);
+    const discussion = await createDiscussion(req.user.id, title, description);
+    res.status(201).json(discussion);
   } catch (error) {
     console.error("Error creating discussion:", error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
 
-// Comment on Discussion
-router.post("/:discussion_id/comment", protectRoute, async (req, res) => {
-  try {
-    const { comment } = req.body;
-    const { discussion_id } = req.params;
-    const user_id = req.user.id;
-
-    if (!comment) {
-      return res.status(400).json({ message: "Comment cannot be empty." });
-    }
-
-    // Ensure discussion exists before commenting
-    const discussionExists = await pool.query(
-      "SELECT id FROM discussion_info WHERE id = $1",
-      [discussion_id]
-    );
-
-    if (discussionExists.rows.length === 0) {
-      return res.status(404).json({ message: "Discussion not found." });
-    }
-
-    const result = await pool.query(
-      "INSERT INTO discussion_comment (discussion_id, user_id, comment) VALUES ($1, $2, $3) RETURNING *",
-      [discussion_id, user_id, comment]
-    );
-
-    res.status(201).json(result.rows[0]);
-  } catch (error) {
-    console.error("Error adding comment:", error);
-    res.status(500).json({ message: "Internal Server Error" });
-  }
-});
-
-// Get all discussions (newest first)
+// ✅ Get All Discussions
 router.get("/", async (req, res) => {
   try {
-    const result = await pool.query(
-      `SELECT di.*, u.name AS username 
-             FROM discussion_info di 
-             JOIN users u ON di.user_id = u.id 
-             ORDER BY di.id DESC`
-    );
-
-    res.json(result.rows);
+    const discussions = await getAllDiscussions();
+    res.json(discussions);
   } catch (error) {
     console.error("Error fetching discussions:", error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
 
-// Search Discussions by title (using ILIKE)
+// ✅ Search Discussions
 router.get("/search", async (req, res) => {
   try {
     const { query } = req.query;
-    if (!query) {
+    if (!query)
       return res.status(400).json({ message: "Search query is required." });
-    }
 
-    const result = await pool.query(
-      `SELECT * FROM discussion_info WHERE title ILIKE $1 ORDER BY id DESC`,
-      [`%${query}%`]
-    );
-
-    res.json(result.rows);
+    const discussions = await searchDiscussions(query);
+    res.json(discussions);
   } catch (error) {
     console.error("Error searching discussions:", error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
 
-// Delete Discussion (Only creator)
+// ✅ Add Comment to Discussion
+router.post("/:discussion_id/comment", protectRoute, async (req, res) => {
+  try {
+    const { comment } = req.body;
+    const { discussion_id } = req.params;
+    const user_id = req.user.id;
+
+    if (!comment)
+      return res.status(400).json({ message: "Comment cannot be empty." });
+
+    // Ensure discussion exists
+    if (!(await discussionExists(discussion_id))) {
+      return res.status(404).json({ message: "Discussion not found." });
+    }
+
+    const newComment = await addComment(discussion_id, user_id, comment);
+    res.status(201).json(newComment);
+  } catch (error) {
+    console.error("Error adding comment:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+// ✅ Get Comments for Discussion
+router.get("/:id/comments", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const comments = await getDiscussionComments(id);
+    res.json(comments);
+  } catch (error) {
+    console.error("Error fetching comments:", error);
+    res.status(500).json({ message: "Failed to fetch comments" });
+  }
+});
+
+// ✅ Delete Discussion (Only Creator)
 router.delete("/:discussion_id", protectRoute, async (req, res) => {
   try {
     const { discussion_id } = req.params;
     const user_id = req.user.id;
 
-    // Check if user is the creator
-    const discussion = await pool.query(
-      "SELECT * FROM discussion_info WHERE id = $1 AND user_id = $2",
-      [discussion_id, user_id]
-    );
-
-    if (discussion.rows.length === 0) {
+    const deleted = await deleteDiscussion(discussion_id, user_id);
+    if (!deleted)
       return res
         .status(403)
         .json({ message: "Unauthorized to delete this discussion." });
-    }
 
-    await pool.query("DELETE FROM discussion_info WHERE id = $1", [
-      discussion_id,
-    ]);
     res.json({ message: "Discussion deleted successfully." });
   } catch (error) {
     console.error("Error deleting discussion:", error);
@@ -125,18 +111,21 @@ router.delete("/:discussion_id", protectRoute, async (req, res) => {
   }
 });
 
-router.get("/:id/comments", async (req, res) => {
-  try {
-    const { id } = req.params;
-    const result = await pool.query(
-      "SELECT discussion_comment.comment, users.username, discussion_comment.created_at FROM discussion_comment JOIN users ON discussion_comment.user_id = users.id WHERE discussion_comment.discussion_id = $1 ORDER BY discussion_comment.created_at DESC",
-      [id]
-    );
-    res.json(result.rows);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Failed to fetch discussion_comment" });
+// Edit a discussion post
+router.patch("/:id", protectRoute, async (req, res) => {
+  const { id } = req.params;
+  const { title, description } = req.body;
+  const user_id = req.user.id; // Extract user ID from token
+
+  const success = await updateDiscussion(id, user_id, title, description);
+
+  if (!success) {
+    return res
+      .status(403)
+      .json({ message: "Unauthorized or discussion not found" });
   }
+
+  res.json({ message: "Discussion updated successfully" });
 });
 
 export default router;
