@@ -92,10 +92,10 @@ export const Dashboard = () => {
     ],
     datasets: [
       {
-        label: "Monthly Revenue ($)",
+        label: "Monthly Revenue (BDT)",
         data: [
-          1000, 1500, 1200, 1800, 2200, 2100, 2500, 2700, 3000, 3200, 3500,
-          4000,
+          100000, 150000, 120000, 180000, 220000, 210000, 250000, 270000, 300000, 320000, 350000,
+          400000,
         ],
         fill: false,
         borderColor: "#36A2EB",

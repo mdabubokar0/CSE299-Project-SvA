@@ -5,6 +5,7 @@ import userRoutes from "./routes/userRoutes.js"; // Import user routes
 import eventRoutes from "./routes/eventRoutes.js";
 import discussionRoutes from "./routes/discussionRoutes.js";
 import photographerRoutes from "./routes/photographerRoutes.js";
+import paymentRoutes from "./routes/paymentRoutes.js";
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -12,7 +13,7 @@ dotenv.config();
 
 const app = express();
 
-// ✅ Middlewares
+// Middlewares
 app.use(express.json());
 app.use(
   cors({
@@ -32,9 +33,10 @@ app.use("/api", userRoutes); // Routes
 app.use("/event", eventRoutes); // Event Routes
 app.use("/api/discussions", discussionRoutes); // Discussion Routes
 app.use("/photographer", photographerRoutes); // Photographer Routes
+app.use("/payment", paymentRoutes); // Payment Routes
 
-// ✅ Start Server
+// Start Server
 const PORT = process.env.PORT || 8081;
 app.listen(PORT, () => {
-  console.log(`✅ Server running on port ${PORT}`);
+  console.log(`- Server running on port ${PORT}`);
 });

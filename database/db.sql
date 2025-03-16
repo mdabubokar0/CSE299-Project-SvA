@@ -36,7 +36,7 @@ CREATE TABLE discussion_comment (
 );
 
 -- Create table for photographers
-CREATE TABLE photographer (
+CREATE TABLE photographer_info (
     nid INT PRIMARY KEY, 
     id INT UNIQUE,  
     picture TEXT,  
@@ -47,3 +47,26 @@ CREATE TABLE photographer (
     hourly_charge DECIMAL(10,2),
     FOREIGN KEY (id) REFERENCES users(id) ON DELETE CASCADE
 )
+
+CREATE TABLE event_payment (
+  id SERIAL PRIMARY KEY,
+  event_id INT REFERENCES event_info(id) ON DELETE SET NULL,
+  user_id INT REFERENCES users(id) ON DELETE CASCADE,
+  payment_method VARCHAR(50) NOT NULL,
+  mobile_number VARCHAR(15) NOT NULL,
+  transaction_id VARCHAR(255) NOT NULL,
+  amount DECIMAL(10, 2) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE photographer_payment (
+  id SERIAL PRIMARY KEY,
+  photographer_id INT REFERENCES photographer_info(id) ON DELETE SET NULL,
+  user_id INT REFERENCES users(id) ON DELETE CASCADE,
+  payment_method VARCHAR(50) NOT NULL,
+  mobile_number VARCHAR(15) NOT NULL,
+  transaction_id VARCHAR(255) NOT NULL,
+  amount DECIMAL(10, 2) NOT NULL,
+  status VARCHAR(50) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

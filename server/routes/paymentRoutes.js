@@ -1,87 +1,103 @@
-const express = require("express");
-const SSLCommerzPayment = require("sslcommerz-lts");
-const { Payment } = require("../models/payment.model.js");
-
+import express from "express";
+import {
+  createPayment,
+  executePayment,
+  queryPayment,
+  searchTransaction,
+  refundTransaction,
+} from "bkash-payment";
+import { eventPayment, photographerPayment } from "../models/payment.model.js";
 const router = express.Router();
 
-const store_id = "your_store_id";
-const store_passwd = "your_store_password";
-const is_live = false; // Set to true in production
+const bkashConfig = {
+  base_url: "bKash_base_url",
+  username: "bkash_username",
+  password: "bkash_password",
+  app_key: "bkash_app_key",
+  app_secret: "bkash_app_secret",
+};
 
-// Initiate payment
-router.post("/initiate", async (req, res) => {
-  const { event_id, user_id, amount } = req.body;
-  const transaction_id = "txn_" + new Date().getTime();
-
+router.post("/bkash-checkout", async (req, res) => {
   try {
-    const data = {
-      total_amount: amount,
-      currency: "BDT",
-      tran_id: transaction_id,
-      success_url: "http://localhost:8081/payment/success",
-      fail_url: "http://localhost:8081/payment/fail",
-      cancel_url: "http://localhost:8081/payment/cancel",
-      ipn_url: "http://localhost:8081/payment/ipn",
-      product_name: "Event Ticket",
-      cus_name: "Customer Name",
-      cus_email: "customer@example.com",
-      cus_add1: "Dhaka",
-      cus_phone: "017xxxxxxxx",
+    const { amount, callbackURL, orderID, reference } = req.body;
+    const paymentDetails = {
+      amount: amount || 10,
+      callbackURL: callbackURL || "http://localhost:8000/bkash-callback",
+      orderID: orderID || "Order_101",
+      reference: reference || "1",
     };
-
-    // Save initial payment as "Pending"
-    await Payment.create({
-      transaction_id,
-      event_id,
-      user_id,
-      amount,
-      status: "Pending",
-    });
-
-    const sslcz = new SSLCommerzPayment(store_id, store_passwd, is_live);
-    sslcz.init(data).then((apiResponse) => {
-      res.json({ GatewayPageURL: apiResponse.GatewayPageURL });
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Payment initiation failed." });
+    const result = await createPayment(bkashConfig, paymentDetails);
+    res.send(result);
+  } catch (e) {
+    console.log(e);
   }
 });
 
-// Success Route
-router.post("/success", async (req, res) => {
-  const { tran_id } = req.body;
-
+router.get("/bkash-callback", async (req, res) => {
   try {
-    await Payment.update(
-      { status: "Success" },
-      { where: { transaction_id: tran_id } }
-    );
-    res.redirect("http://localhost:3000/payment-success");
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Error updating payment status." });
+    const { status, paymentID } = req.query;
+    let result;
+    let response = {
+      statusCode: "4000",
+      statusMessage: "Payment Failed",
+    };
+    if (status === "success")
+      result = await executePayment(bkashConfig, paymentID);
+
+    if (result?.transactionStatus === "Completed") {
+      // database
+    }
+    if (result)
+      response = {
+        statusCode: result?.statusCode,
+        statusMessage: result?.statusMessage,
+      };
+    res.send(response);
+  } catch (e) {
+    console.log(e);
   }
 });
 
-// Failure Route
-router.post("/fail", async (req, res) => {
-  const { tran_id } = req.body;
-  await Payment.update(
-    { status: "Failed" },
-    { where: { transaction_id: tran_id } }
-  );
-  res.redirect("http://localhost:3000/payment-fail");
+// Admin
+router.post("/bkash-refund", async (req, res) => {
+  try {
+    const { paymentID, trxID, amount } = req.body;
+    const refundDetails = {
+      paymentID,
+      trxID,
+      amount,
+    };
+    const result = await refundTransaction(bkashConfig, refundDetails);
+    res.send(result);
+  } catch (e) {
+    console.log(e);
+  }
 });
 
-// Cancel Route
-router.post("/cancel", async (req, res) => {
-  const { tran_id } = req.body;
-  await Payment.update(
-    { status: "Failed" },
-    { where: { transaction_id: tran_id } }
-  );
-  res.redirect("http://localhost:3000/payment-cancel");
+router.get("/bkash-search", async (req, res) => {
+  try {
+    const { trxID } = req.query;
+    const result = await searchTransaction(bkashConfig, trxID);
+    res.send(result);
+  } catch (e) {
+    console.log(e);
+  }
 });
 
-module.exports = router;
+router.get("/bkash-query", async (req, res) => {
+  try {
+    const { paymentID } = req.query;
+    const result = await queryPayment(bkashConfig, paymentID);
+    res.send(result);
+  } catch (e) {
+    console.log(e);
+  }
+});
+
+// Save event payment
+router.post("/event", eventPayment);
+
+// Save photographer payment
+router.post("/photographer", photographerPayment);
+
+export default router;
