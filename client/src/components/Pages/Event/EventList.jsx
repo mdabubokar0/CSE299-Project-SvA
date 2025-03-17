@@ -10,6 +10,7 @@ import {
   Descriptions,
   Button,
   Input,
+  Select,
 } from "antd";
 import {
   CalendarOutlined,
@@ -17,13 +18,19 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 
+const { Option } = Select;
+
 export const EventList = () => {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
-  const [searchQuery, setSearchQuery] = useState(""); // State for search query
-  const [categoryFilter, setCategoryFilter] = useState(""); // State for selected category
+  const [searchQuery, setSearchQuery] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("");
+  const [isPaymentModalVisible, setIsPaymentModalVisible] = useState(false); // State for payment modal
+  const [paymentMethod, setPaymentMethod] = useState("bKash"); // State for payment method
+  const [mobileNumber, setMobileNumber] = useState(""); // State for mobile number
+  const [transactionId, setTransactionId] = useState(""); // State for transaction ID
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -42,7 +49,6 @@ export const EventList = () => {
     fetchEvents();
   }, []);
 
-  // Filter events based on search query and category
   const filteredEvents = events.filter((event) => {
     const matchesSearch = event.title
       .toLowerCase()
@@ -60,46 +66,67 @@ export const EventList = () => {
 
   const handleModalClose = () => {
     setIsModalVisible(false);
-    setSelectedEvent(null); // Reset selected event
+    setSelectedEvent(null);
   };
 
   const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value); // Update search query state
+    setSearchQuery(e.target.value);
   };
 
   const handleCategoryClick = (category) => {
     if (category === categoryFilter) {
-      setCategoryFilter(""); // Remove filter if clicked again
+      setCategoryFilter("");
     } else {
-      setCategoryFilter(category); // Set new category filter
+      setCategoryFilter(category);
+    }
+  };
+
+  const handlePaymentModalOpen = () => {
+    setIsPaymentModalVisible(true); // Open payment modal
+  };
+
+  const handlePaymentModalClose = () => {
+    setIsPaymentModalVisible(false); // Close payment modal
+    setPaymentMethod("bKash"); // Reset payment method
+    setMobileNumber(""); // Reset mobile number
+    setTransactionId(""); // Reset transaction ID
+  };
+
+  const handlePaymentSubmit = async () => {
+    if (!selectedEvent) {
+      message.error("No event selected");
+      return;
+    }
+
+    if (!mobileNumber || !transactionId) {
+      message.error("Please fill in all fields");
+      return;
+    }
+
+    try {
+      const response = await axios.post("http://localhost:8081/payment/event", {
+        event_id: selectedEvent.id,
+        user_id: 1, // Replace with actual user ID (from JWT or context)
+        payment_method: paymentMethod,
+        mobile_number: mobileNumber,
+        transaction_id: transactionId,
+        amount: selectedEvent.ticket,
+      });
+
+      if (response.data) {
+        message.success("Payment successful");
+        handlePaymentModalClose(); // Close payment modal
+        handleModalClose(); // Close event details modal
+      }
+    } catch (error) {
+      console.error("Payment Save Error:", error);
+      message.error("Error saving payment");
     }
   };
 
   if (loading) {
     return <Spin size="large" />;
   }
-
-  const handleBookClick = async (event) => {
-    try {
-      const response = await axios.post(
-        "http://localhost:8081/payment/initiate",
-        {
-          event_id: event.id,
-          user_id: 1, // Replace with actual user ID
-          amount: event.ticket,
-        }
-      );
-
-      if (response.data && response.data.GatewayPageURL) {
-        window.location.href = response.data.GatewayPageURL; // Redirect to SSLCOMMERZ
-      } else {
-        message.error("Failed to initiate payment.");
-      }
-    } catch (error) {
-      console.error("Payment error:", error);
-      message.error("Error initiating payment.");
-    }
-  };
 
   return (
     <div className="mt-5">
@@ -113,10 +140,9 @@ export const EventList = () => {
         />
       </div>
 
-      {/* Category Bar (Flexbox) */}
+      {/* Category Bar */}
       <div style={{ marginBottom: "20px", textAlign: "center" }}>
         <div style={{ display: "flex", justifyContent: "center", gap: "12px" }}>
-          {/* All Button */}
           <Button
             key="all"
             onClick={() => handleCategoryClick("")}
@@ -125,13 +151,12 @@ export const EventList = () => {
               padding: "8px 20px",
               fontSize: "16px",
               backgroundColor: categoryFilter === "" ? "#010101" : "#fff",
-              color: categoryFilter === "" ? "#fff" : "#000", // Change text color when active
+              color: categoryFilter === "" ? "#fff" : "#000",
             }}
           >
             All
           </Button>
 
-          {/* Category Buttons */}
           {["Concert", "Gaming", "Anime", "Workshop"].map((category) => (
             <Button
               key={category}
@@ -142,7 +167,7 @@ export const EventList = () => {
                 fontSize: "16px",
                 backgroundColor:
                   category === categoryFilter ? "#010101" : "#fff",
-                color: category === categoryFilter ? "#fff" : "#000", // Change text color when active
+                color: category === categoryFilter ? "#fff" : "#000",
               }}
             >
               {category}
@@ -189,12 +214,12 @@ export const EventList = () => {
             key="book"
             type="primary"
             className="w-full bg-primary"
-            onClick={() => handleBookClick(selectedEvent)}
+            onClick={handlePaymentModalOpen} // Open payment modal
           >
             Book Ticket
           </Button>,
         ]}
-        width={900} // Adjust width for better view
+        width={900}
       >
         <Row gutter={12}>
           <Col span={10}>
@@ -229,6 +254,47 @@ export const EventList = () => {
             </Descriptions>
           </Col>
         </Row>
+      </Modal>
+
+      {/* Payment Modal */}
+      <Modal
+        title="Complete Payment"
+        visible={isPaymentModalVisible}
+        onCancel={handlePaymentModalClose}
+        footer={[
+          <Button key="cancel" onClick={handlePaymentModalClose}>
+            Cancel
+          </Button>,
+          <Button key="submit" type="primary" onClick={handlePaymentSubmit}>
+            Submit Payment
+          </Button>,
+        ]}
+      >
+        <h2 className="mb-1">* Send the payment to 01712345678</h2>
+        <Select
+          defaultValue="bKash"
+          style={{ width: "100%", marginBottom: "16px" }}
+          onChange={(value) => setPaymentMethod(value)}
+        >
+          <Option value="bKash">bKash</Option>
+          <Option value="Nagad">Nagad</Option>
+          <Option value="Rocket">Rocket</Option>
+        </Select>
+
+        <Input
+          placeholder="Mobile Number"
+          value={mobileNumber}
+          type="number"
+          onChange={(e) => setMobileNumber(e.target.value)}
+          style={{ marginBottom: "16px" }}
+        />
+
+        <Input
+          placeholder="Transaction ID"
+          value={transactionId}
+          onChange={(e) => setTransactionId(e.target.value)}
+          style={{ marginBottom: "16px" }}
+        />
       </Modal>
     </div>
   );
