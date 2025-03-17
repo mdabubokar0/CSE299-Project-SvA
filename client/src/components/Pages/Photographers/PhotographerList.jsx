@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import {
+  Input,
   Card,
   Row,
   Col,
@@ -9,6 +10,7 @@ import {
   Modal,
   Descriptions,
   Button,
+  Select
 } from "antd";
 import {
   CameraOutlined,
@@ -16,11 +18,17 @@ import {
   DollarOutlined,
 } from "@ant-design/icons";
 
+const { Option } = Select;
+
 export const PhotographerList = () => {
   const [photographers, setPhotographers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedPhotographer, setSelectedPhotographer] = useState(null);
+  const [isPaymentModalVisible, setIsPaymentModalVisible] = useState(false); // State for payment modal
+  const [paymentMethod, setPaymentMethod] = useState("bKash"); // State for payment method
+  const [mobileNumber, setMobileNumber] = useState(""); // State for mobile number
+  const [transactionId, setTransactionId] = useState(""); // State for transaction ID
 
   useEffect(() => {
     const fetchPhotographers = async () => {
@@ -48,6 +56,50 @@ export const PhotographerList = () => {
   const handleModalClose = () => {
     setIsModalVisible(false);
     setSelectedPhotographer(null);
+  };
+
+  const handlePaymentModalOpen = () => {
+    setIsPaymentModalVisible(true); // Open payment modal
+  };
+
+  const handlePaymentModalClose = () => {
+    setIsPaymentModalVisible(false); // Close payment modal
+    setPaymentMethod("bKash"); // Reset payment method
+    setMobileNumber(""); // Reset mobile number
+    setTransactionId(""); // Reset transaction ID
+  };
+
+  const handlePaymentSubmit = async () => {
+    if (!selectedPhotographer) {
+      message.error("No event selected");
+      return;
+    }
+
+    if (!mobileNumber || !transactionId) {
+      message.error("Please fill in all fields");
+      return;
+    }
+
+    try {
+      const response = await axios.post("http://localhost:8081/payment/photographer", {
+        photographer_id: selectedPhotographer.id,
+        user_id: 1, // Replace with actual user ID (from JWT or context)
+        payment_method: paymentMethod,
+        mobile_number: mobileNumber,
+        transaction_id: transactionId,
+        amount: selectedPhotographer.hourly_charge,
+        status: "pending"
+      });
+
+      if (response.data) {
+        message.success("Payment successful");
+        handlePaymentModalClose(); // Close payment modal
+        handleModalClose(); // Close event details modal
+      }
+    } catch (error) {
+      console.error("Payment Save Error:", error);
+      message.error("Error saving payment");
+    }
   };
 
   if (loading) {
@@ -87,7 +139,16 @@ export const PhotographerList = () => {
         title={selectedPhotographer?.photographer_name}
         visible={isModalVisible}
         onCancel={handleModalClose}
-        footer={null}
+        footer={[
+          <Button
+            key="book"
+            type="primary"
+            className="w-full bg-primary"
+            onClick={handlePaymentModalOpen} // Open payment modal
+          >
+            Hire
+          </Button>,
+        ]}
         width={800}
       >
         <Row gutter={12}>
@@ -123,6 +184,47 @@ export const PhotographerList = () => {
             </Descriptions>
           </Col>
         </Row>
+      </Modal>
+
+      {/* Payment Modal */}
+      <Modal
+        title="Complete Payment"
+        visible={isPaymentModalVisible}
+        onCancel={handlePaymentModalClose}
+        footer={[
+          <Button key="cancel" onClick={handlePaymentModalClose}>
+            Cancel
+          </Button>,
+          <Button key="submit" type="primary" onClick={handlePaymentSubmit}>
+            Submit Payment
+          </Button>,
+        ]}
+      >
+        <h2 className="mb-1">* Send the payment to 01712345678</h2>
+        <Select
+          defaultValue="bKash"
+          style={{ width: "100%", marginBottom: "16px" }}
+          onChange={(value) => setPaymentMethod(value)}
+        >
+          <Option value="bKash">bKash</Option>
+          <Option value="Nagad">Nagad</Option>
+          <Option value="Rocket">Rocket</Option>
+        </Select>
+
+        <Input
+          placeholder="Mobile Number"
+          value={mobileNumber}
+          type="number"
+          onChange={(e) => setMobileNumber(e.target.value)}
+          style={{ marginBottom: "16px" }}
+        />
+
+        <Input
+          placeholder="Transaction ID"
+          value={transactionId}
+          onChange={(e) => setTransactionId(e.target.value)}
+          style={{ marginBottom: "16px" }}
+        />
       </Modal>
     </div>
   );
