@@ -122,7 +122,7 @@ export const SuggestionList = () => {
       title: "Price",
       dataIndex: "price",
       key: "price",
-      render: (price) => `$${parseFloat(price).toFixed(2)}`,
+      render: (price) => `৳ ${parseFloat(price).toFixed(2)}`,
     },
     {
       title: "Type",
@@ -167,7 +167,7 @@ export const SuggestionList = () => {
       <div className="m-3 w-full">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-medium bg-secondary-100 p-3 rounded-md shadow-lg">
-            Suggestions
+            Products
           </h1>
           <Avatar />
         </div>
@@ -189,7 +189,7 @@ export const SuggestionList = () => {
       </div>
 
       <Modal
-        title="Edit Suggestion"
+        title="Edit Product"
         visible={isEditModalVisible}
         onCancel={handleEditModalClose}
         footer={[

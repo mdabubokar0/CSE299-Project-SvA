@@ -10,7 +10,7 @@ import {
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const API_BASE_URL = "http://localhost:8081/api/discussions";
+const API_BASE_URL = "http://localhost:8081/discussion";
 
 export const Forum = () => {
   const [discussions, setDiscussions] = useState([]);

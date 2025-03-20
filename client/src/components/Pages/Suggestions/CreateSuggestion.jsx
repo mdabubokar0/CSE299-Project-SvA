@@ -58,11 +58,11 @@ export const CreateSuggestion = ({ userId }) => {
       <div className="m-3 w-full">
         <div className="flex items-center justify-between">
           <h1 className="text-xl font-medium bg-secondary-100 p-3 rounded-md shadow-lg">
-            Create Suggestion
+            Create Product
           </h1>
           <Avatar />
         </div>
-        <Card title="Suggestion Details" className="mt-3 shadow-lg">
+        <Card title="Product Details" className="mt-3 shadow-lg">
           <Form layout="vertical" onFinish={onFinish}>
             <Form.Item
               label="Title"
@@ -117,7 +117,7 @@ export const CreateSuggestion = ({ userId }) => {
 
             <Form.Item>
               <Button type="primary" htmlType="submit" loading={loading} block>
-                Create Suggestion
+                Create Product
               </Button>
             </Form.Item>
           </Form>

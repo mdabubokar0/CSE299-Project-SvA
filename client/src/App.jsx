@@ -30,8 +30,8 @@ function App() {
         <Route exact path="/feedback" element={<Feedback />} />
         <Route exact path="/photographers" element={<Photographers />} />
         <Route exact path="/create-photographer" element={<CreatePhotographer />} />
-        <Route exact path="/suggestions" element={<SuggestionList />} />
-        <Route exact path="/create-suggestion" element={<CreateSuggestion />} />
+        <Route exact path="/products" element={<SuggestionList />} />
+        <Route exact path="/create-product" element={<CreateSuggestion />} />
         <Route exact path="/users" element={<Users />} />
       </Routes>
     </Main>
