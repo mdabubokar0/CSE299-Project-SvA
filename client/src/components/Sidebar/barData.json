@@ -21,6 +21,11 @@
   },
   {
     "id": 5,
+    "title": "Suggestions",
+    "link": "/suggestions"
+  },
+  {
+    "id": 6,
     "title": "Settings",
     "link": "/settings"
   }

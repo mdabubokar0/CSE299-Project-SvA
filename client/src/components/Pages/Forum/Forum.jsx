@@ -8,6 +8,7 @@ import {
   DeleteOutlined,
 } from "@ant-design/icons";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const API_BASE_URL = "http://localhost:8081/api/discussions";
 
@@ -28,6 +29,13 @@ export const Forum = () => {
   const [isViewCommentsModalOpen, setViewCommentsModalOpen] = useState(false); // Show comments modal
   const [isEditModalOpen, setEditModalOpen] = useState(false); // Edit modal state
   const [editingDiscussion, setEditingDiscussion] = useState(null); // Track discussion being edited
+  const token = localStorage.getItem("token");
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (!token) {
+      navigate("/auth");
+    }
+  }, []);
 
   const decodeJWT = (token) => {
     if (!token) return null;

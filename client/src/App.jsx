@@ -10,6 +10,8 @@ import { CreateEvent } from "./components/Pages/Event/CreateEvent"
 import { Feedback } from "./components/Pages/Feedback/Feedback"
 import { Photographers } from "./components/Pages/Photographers/Photographers"
 import { CreatePhotographer } from "./components/Pages/Photographers/CreatePhotographer"
+import { SuggestionList } from "./components/Pages/Suggestions/SuggestionList"
+import { CreateSuggestion } from "./components/Pages/Suggestions/CreateSuggestion"
 import { Users } from "./components/Pages/Users/Users"
 
 function App() {
@@ -28,6 +30,8 @@ function App() {
         <Route exact path="/feedback" element={<Feedback />} />
         <Route exact path="/photographers" element={<Photographers />} />
         <Route exact path="/create-photographer" element={<CreatePhotographer />} />
+        <Route exact path="/suggestions" element={<SuggestionList />} />
+        <Route exact path="/create-suggestion" element={<CreateSuggestion />} />
         <Route exact path="/users" element={<Users />} />
       </Routes>
     </Main>

@@ -19,6 +19,7 @@ export const Sidebar = () => {
         b.title === "Dashboard" ||
         b.title === "Users" ||
         b.title === "Events" ||
+        b.title === "Suggestions" ||
         b.title === "Settings"
       );
     } else if (role === "organizer") {

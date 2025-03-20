@@ -8,11 +8,25 @@ const router = express.Router(); // ✅ Correctly initialize the router
 router.post("/register", registerUser);
 router.post("/login", loginUser);
 
-// Select all users
+// Select all users with pagination
 router.get("/users", async (req, res) => {
   try {
-    const result = await pool.query("SELECT * FROM users");
-    res.json(result.rows);
+    const { page = 1, limit = 10 } = req.query; // Default: page 1, limit 10
+    const offset = (page - 1) * limit; // Calculate offset
+
+    // Fetch paginated users
+    const usersQuery = await pool.query(
+      "SELECT * FROM users ORDER BY id LIMIT $1 OFFSET $2",
+      [limit, offset]
+    );
+
+    // Fetch total count of users
+    const countQuery = await pool.query("SELECT COUNT(*) FROM users");
+
+    res.json({
+      users: usersQuery.rows,
+      total: parseInt(countQuery.rows[0].count), // Total number of users
+    });
   } catch (error) {
     console.error("Error fetching users:", error.message);
     res.status(500).json({ error: "Internal Server Error" });

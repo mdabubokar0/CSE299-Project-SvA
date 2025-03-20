@@ -10,6 +10,12 @@ export const Users = () => {
   const navigate = useNavigate();
   const role = localStorage.getItem("role");
   const [userData, setUserData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 10,
+    total: 0,
+  });
 
   useEffect(() => {
     if (!token) {
@@ -17,16 +23,33 @@ export const Users = () => {
     } else {
       fetchUserData();
     }
-  }, [token, navigate]);
+  }, [token, navigate, pagination.current, pagination.pageSize]);
 
   // Fetch users from API
   const fetchUserData = async () => {
+    setLoading(true);
     try {
-      const response = await axios.get("http://localhost:8081/api/users");
-      setUserData(response.data);
+      const response = await axios.get("http://localhost:8081/api/users", {
+        params: {
+          page: pagination.current,
+          limit: pagination.pageSize,
+        },
+      });
+      setUserData(response.data.users);
+      setPagination((prev) => ({
+        ...prev,
+        total: response.data.total, // Update total count from API
+      }));
     } catch (error) {
       console.error("Error fetching user data:", error);
+    } finally {
+      setLoading(false);
     }
+  };
+
+  // Handle pagination change
+  const handleTableChange = (pagination) => {
+    setPagination(pagination);
   };
 
   // Define table columns
@@ -54,6 +77,14 @@ export const Users = () => {
     },
   ];
 
+  // Custom pagination text (e.g., "1-10 of 100 items")
+  const paginationText = () => {
+    const { current, pageSize, total } = pagination;
+    const start = (current - 1) * pageSize + 1;
+    const end = Math.min(current * pageSize, total);
+    return `${start}-${end} of ${total} items`;
+  };
+
   return (
     <div className="flex">
       <div className="w-auto">
@@ -67,7 +98,19 @@ export const Users = () => {
           <Avatar />
         </div>
         <div className="mt-3">
-          <Table columns={columns} dataSource={userData} rowKey="id" />
+          <Table
+            columns={columns}
+            dataSource={userData}
+            rowKey="id"
+            loading={loading}
+            pagination={{
+              ...pagination,
+              showTotal: paginationText, // Show custom pagination text
+              showSizeChanger: true, // Allow changing page size
+              pageSizeOptions: ["10", "20", "50"], // Page size options
+            }}
+            onChange={handleTableChange} // Handle pagination change
+          />
         </div>
       </div>
     </div>

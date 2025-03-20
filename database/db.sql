@@ -70,3 +70,12 @@ CREATE TABLE photographer_payment (
   status VARCHAR(50) NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Create suggestion table
+CREATE TABLE suggestion_info (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    price DECIMAL(10, 2) NOT NULL,
+    thumbnail VARCHAR(500),
+    type VARCHAR(25) NOT NULL
+);
