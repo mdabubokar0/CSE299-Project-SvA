@@ -48,15 +48,6 @@ export const Forum = () => {
     const decodedData = JSON.parse(atob(base64)); // `atob` decodes base64
     return decodedData;
   };
-
-  const getLoggedInUserId = () => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      const decodedToken = decodeJWT(token); // Decode the JWT
-      return decodedToken?.id; // Return the user ID from the decoded token
-    }
-    return null;
-  };  
   
   useEffect(() => {
     fetchDiscussions();

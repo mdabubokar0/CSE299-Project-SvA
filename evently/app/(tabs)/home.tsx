@@ -67,75 +67,83 @@ export default function home() {
   const workshops = events.filter((event) => event.category === "Workshop");
 
   return (
-    <ScrollView style={styles.container}> {/* Wrap the entire content with ScrollView */}
+    <View style={styles.container}>
+      {/* Wrap the entire content with ScrollView */}
+      <Text style={styles.header}>Home</Text>
       {/* Concerts Section */}
-      {concerts.length > 0 && (
-        <>
-          <Text style={styles.sectionTitle}>Concerts</Text>
-          <FlatList
-            data={concerts}
-            horizontal
-            keyExtractor={(item: Event) => item.id.toString()}
-            renderItem={({ item }: { item: Event }) => <EventCard event={item} />}
-            showsHorizontalScrollIndicator={false}
-          />
-        </>
-      )}
-
-      {/* Gaming Section */}
-      {gaming.length > 0 && (
-        <>
-          <Text style={styles.sectionTitle}>Gaming</Text>
-          <FlatList
-            data={gaming}
-            horizontal
-            keyExtractor={(item: Event) => item.id.toString()}
-            renderItem={({ item }: { item: Event }) => <EventCard event={item} />}
-            showsHorizontalScrollIndicator={false}
-          />
-        </>
-      )}
-
-      {/* Anime Section */}
-      {anime.length > 0 && (
-        <>
-          <Text style={styles.sectionTitle}>Anime</Text>
-          <FlatList
-            data={anime}
-            horizontal
-            keyExtractor={(item: Event) => item.id.toString()}
-            renderItem={({ item }: { item: Event }) => <EventCard event={item} />}
-            showsHorizontalScrollIndicator={false}
-          />
-        </>
-      )}
-
-      {/* Workshops Section */}
-      {workshops.length > 0 && (
-        <>
-          <Text style={styles.sectionTitle}>Workshops</Text>
-          <FlatList
-            data={workshops}
-            horizontal
-            keyExtractor={(item: Event) => item.id.toString()}
-            renderItem={({ item }: { item: Event }) => <EventCard event={item} />}
-            showsHorizontalScrollIndicator={false}
-          />
-        </>
-      )}
-
-      {/* Photographers Section */}
-      <Text style={styles.sectionTitle}>Photographers</Text>
-      <FlatList
-        data={photographers}
-        horizontal
-        keyExtractor={(item: Photographer) => item.id.toString()}
-        renderItem={({ item }: { item: Photographer }) => (
-          <PhotographerCard photographer={item} />
+      <ScrollView>
+        {concerts.length > 0 && (
+          <>
+            <Text style={styles.sectionTitle}>Concerts</Text>
+            <FlatList
+              data={concerts}
+              horizontal
+              keyExtractor={(item: Event) => item.id.toString()}
+              renderItem={({ item }: { item: Event }) => (
+                <EventCard event={item} />
+              )}
+              showsHorizontalScrollIndicator={false}
+            />
+          </>
         )}
-        showsHorizontalScrollIndicator={false}
-      />
-    </ScrollView>
+        {/* Gaming Section */}
+        {gaming.length > 0 && (
+          <>
+            <Text style={styles.sectionTitle}>Gaming</Text>
+            <FlatList
+              data={gaming}
+              horizontal
+              keyExtractor={(item: Event) => item.id.toString()}
+              renderItem={({ item }: { item: Event }) => (
+                <EventCard event={item} />
+              )}
+              showsHorizontalScrollIndicator={false}
+            />
+          </>
+        )}
+        {/* Anime Section */}
+        {anime.length > 0 && (
+          <>
+            <Text style={styles.sectionTitle}>Anime</Text>
+            <FlatList
+              data={anime}
+              horizontal
+              keyExtractor={(item: Event) => item.id.toString()}
+              renderItem={({ item }: { item: Event }) => (
+                <EventCard event={item} />
+              )}
+              showsHorizontalScrollIndicator={false}
+            />
+          </>
+        )}
+        {/* Workshops Section */}
+        {workshops.length > 0 && (
+          <>
+            <Text style={styles.sectionTitle}>Workshops</Text>
+            <FlatList
+              data={workshops}
+              horizontal
+              keyExtractor={(item: Event) => item.id.toString()}
+              renderItem={({ item }: { item: Event }) => (
+                <EventCard event={item} />
+              )}
+              showsHorizontalScrollIndicator={false}
+            />
+          </>
+        )}
+        {/* Photographers Section */}
+        <Text style={styles.sectionTitle}>Photographers</Text>
+        <FlatList
+          data={photographers}
+          horizontal
+          keyExtractor={(item: Photographer) => item.id.toString()}
+          renderItem={({ item }: { item: Photographer }) => (
+            <PhotographerCard photographer={item} />
+          )}
+          showsHorizontalScrollIndicator={false}
+        />
+      </ScrollView>
+    </View>
   );
 }
 
@@ -177,6 +185,15 @@ const styles = StyleSheet.create({
     backgroundColor: "#F8F8F8",
     paddingTop: 20,
     paddingHorizontal: 20,
+  },
+  header: {
+    fontSize: 28,
+    fontWeight: "bold",
+    color: "#2c3e50",
+    marginBottom: 30,
+    paddingBottom: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#e0e0e0",
   },
   loaderContainer: {
     flex: 1,
