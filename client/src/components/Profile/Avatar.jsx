@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react"; // Import react hooks
 import axios from "axios"; // Import axios for API integration
 import AntdAvatar from "antd/es/avatar"; // Import the Avatar component from Ant Design
 import { useNavigate } from "react-router-dom"; // Import navigate from react router dom for navigation
+import { Link } from "react-router-dom";
 
 export const Avatar = () => {
   // Get the token from the local storage
@@ -12,9 +13,6 @@ export const Avatar = () => {
 
   // State to store the fetched username
   const [userName, setUserName] = useState("");
-
-  // State to manage loading status
-  const [loading, setLoading] = useState(true);
 
   // State to store error messages if any issue occurs during API call
   const [error, setError] = useState(null);
@@ -41,8 +39,6 @@ export const Avatar = () => {
       } catch (err) {
         console.error("❌ Error fetching user name:", err);
         setError("Failed to load user name"); // Set error message in case of failure
-      } finally {
-        setLoading(false); // Set loading to false after API call is completed
       }
     };
 
@@ -60,14 +56,14 @@ export const Avatar = () => {
 
   return (
     <div>
-      {loading ? (
-        <p>Loading...</p> // Show loading text while API call is in progress
-      ) : error ? (
+      {error ? (
         <p className="text-red-500">{error}</p> // Show error message if fetching failed
       ) : (
-        <AntdAvatar size={50} className="bg-primary shadow-lg">
-          {getInitials(userName)} {/* Display initials inside avatar */}
-        </AntdAvatar>
+        <Link to="/profile">
+          <AntdAvatar size={50} className="bg-primary shadow-lg">
+            {getInitials(userName)} {/* Display initials inside avatar */}
+          </AntdAvatar>
+        </Link>
       )}
     </div>
   );

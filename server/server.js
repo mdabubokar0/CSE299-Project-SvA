@@ -18,7 +18,7 @@ const app = express();
 app.use(express.json());
 app.use(
   cors({
-    origin: "*",
+    origin: ["http://localhost:5173", "http://172.20.10.2:8082"],
     credentials: true,
   })
 );
@@ -36,6 +36,21 @@ app.use("/discussion", discussionRoutes); // Discussion Routes
 app.use("/photographer", photographerRoutes); // Photographer Routes
 app.use("/payment", paymentRoutes); // Payment Routes
 app.use("/suggestion", suggestionRoutes); // Suggestion Routes
+
+app.get('/generate-qr/:transaction_id', async (req, res) => {
+  const { transaction_id } = req.params;
+
+  // Generate a link using the transaction ID
+  const url = `https://yourwebsite.com/transaction/${transaction_id}`;
+
+  try {
+    // Generate the QR code as a data URL (base64 encoded)
+    const qrCodeUrl = await QRCode.toDataURL(url);
+    res.json({ qrCodeUrl });
+  } catch (error) {
+    res.status(500).send('Error generating QR code');
+  }
+});
 
 // Start Server
 const PORT = process.env.PORT || 8081;

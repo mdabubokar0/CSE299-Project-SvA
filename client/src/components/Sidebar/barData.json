@@ -7,12 +7,56 @@
   {
     "id": 2,
     "title": "Users",
-    "link": "/users"
+    "link": "/users",
+    "submenu": [
+      {
+        "id": 21,
+        "title": "Organizers",
+        "link": "/users/organizers"
+      },
+      {
+        "id": 22,
+        "title": "Photographers",
+        "link": "/users/photographers"
+      },
+      {
+        "id": 23,
+        "title": "Attendees",
+        "link": "/users/attendees"
+      }
+    ]
   },
   {
     "id": 3,
     "title": "Events",
-    "link": "/event"
+    "link": "/events",
+    "submenu": [
+      {
+        "id": 31,
+        "title": "Concerts",
+        "link": "/events/concerts"
+      },
+      {
+        "id": 32,
+        "title": "Gaming",
+        "link": "/events/gaming"
+      },
+      {
+        "id": 33,
+        "title": "Anime",
+        "link": "/events/anime"
+      },
+      {
+        "id": 34,
+        "title": "Workshops",
+        "link": "/events/workshops"
+      },
+      {
+        "id": 35,
+        "title": "Create Event",
+        "link": "/events/create"
+      }
+    ]
   },
   {
     "id": 4,
@@ -22,11 +66,38 @@
   {
     "id": 5,
     "title": "Products",
-    "link": "/products"
-  },
-  {
-    "id": 6,
-    "title": "Settings",
-    "link": "/settings"
+    "link": "/products",
+    "submenu": [
+      {
+        "id": 51,
+        "title": "Drinks",
+        "link": "/products/drinks"
+      },
+      {
+        "id": 52,
+        "title": "Snacks",
+        "link": "/products/snacks"
+      },
+      {
+        "id": 53,
+        "title": "Venues",
+        "link": "/products/venue"
+      },
+      {
+        "id": 54,
+        "title": "Transportation",
+        "link": "/products/transportation"
+      },
+      {
+        "id": 55,
+        "title": "Decorations",
+        "link": "/products/decorations"
+      },
+      {
+        "id": 56,
+        "title": "Create Product",
+        "link": "/products/create"
+      }
+    ]
   }
 ]

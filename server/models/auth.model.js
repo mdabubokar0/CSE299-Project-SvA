@@ -73,3 +73,50 @@ export const loginUser = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+// Update User
+export const updateUser = async (req, res) => {
+  try {
+    const userId = req.user.id; // Ensure the user is authenticated
+    if (!userId) {
+      return res.status(400).json({ error: "User ID is required" });
+    }
+
+    const { name, username, password } = req.body;
+
+    // Check if at least one field is provided
+    if (!name && !username && !password) {
+      return res.status(400).json({ error: "No fields provided for update" });
+    }
+
+    // Build the query dynamically
+    let query = "UPDATE users SET";
+    let params = [];
+    let updates = [];
+
+    if (name) {
+      updates.push(` name = $${params.length + 1} `);
+      params.push(name);
+    }
+    if (username) {
+      updates.push(` username = $${params.length + 1} `);
+      params.push(username);
+    }
+    if (password) {
+      updates.push(` password = $${params.length + 1} `);
+      params.push(password); // Make sure to hash the password before storing!
+    }
+
+    query += updates.join(",");
+    query += ` WHERE id = $${params.length + 1}`;
+    params.push(userId);
+
+    // Run the query
+    await pool.query(query, params);
+
+    res.json({ success: true, message: "Profile updated successfully" });
+  } catch (error) {
+    console.error("Update Error:", error.message);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};

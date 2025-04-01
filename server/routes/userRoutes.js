@@ -1,12 +1,13 @@
 import express from "express";
 import { pool } from "../config/db.js";
-import { registerUser, loginUser } from "../models/auth.model.js";
+import { registerUser, loginUser, updateUser } from "../models/auth.model.js";
 import { protectRoute } from "../middleware/authMiddleware.js";
 
-const router = express.Router(); // ✅ Correctly initialize the router
+const router = express.Router(); // Correctly initialize the router
 
 router.post("/register", registerUser);
 router.post("/login", loginUser);
+router.patch("/update", protectRoute, updateUser)
 
 // Select all users with pagination
 router.get("/users", async (req, res) => {
@@ -36,30 +37,29 @@ router.get("/users", async (req, res) => {
 // Route to fetch user name
 router.get("/profile", protectRoute, async (req, res) => {
   try {
-    const userId = req.user.id; // Extract user ID from the decoded JWT stored in req.user
+    const userId = req.user.id;
 
-    // Check if userId is present; if not, return a 400 Bad Request response
     if (!userId) {
-      return res.status(400).json({ error: "User  ID not found in token" });
+      return res.status(400).json({ error: "User ID not found in token" });
     }
 
-    // Query to get the user's name from the database using the user ID
+    // Fetch both name and username
     const result = await pool.query(
-      "SELECT name FROM users WHERE id = $1", // SQL query to select the name
-      [userId] // Parameterized query to prevent SQL injection
+      "SELECT name, username FROM users WHERE id = $1",
+      [userId]
     );
 
-    // Check if any rows were returned; if not, return a 404 Not Found response
     if (result.rows.length === 0) {
-      return res.status(404).json({ error: "User  not found" });
+      return res.status(404).json({ error: "User not found" });
     }
 
-    // Send a JSON response containing the user's name
-    res.json({ name: result.rows[0].name }); // Send the user's name as a response
+    // Send both name and username
+    res.json({
+      name: result.rows[0].name,
+      username: result.rows[0].username, // Add username to the response
+    });
   } catch (error) {
-    // Log the error message to the console for debugging purposes
-    console.error("❌ Error fetching name:", error.message);
-    // Send a 500 Internal Server Error response if an error occurs
+    console.error("Error fetching user profile:", error.message);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });

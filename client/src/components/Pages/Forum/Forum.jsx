@@ -36,18 +36,6 @@ export const Forum = () => {
       navigate("/auth");
     }
   }, []);
-
-  const decodeJWT = (token) => {
-    if (!token) return null;
-  
-    // JWT is in the format: header.payload.signature
-    const base64Url = token.split('.')[1]; // Extract the payload part (base64Url)
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/'); // Convert URL-safe base64 to normal base64
-  
-    // Decode the base64 string to JSON
-    const decodedData = JSON.parse(atob(base64)); // `atob` decodes base64
-    return decodedData;
-  };
   
   useEffect(() => {
     fetchDiscussions();

@@ -94,8 +94,8 @@ export const Dashboard = () => {
       {
         label: "Monthly Revenue (BDT)",
         data: [
-          100000, 150000, 120000, 180000, 220000, 210000, 250000, 270000, 300000, 320000, 350000,
-          400000,
+          100000, 150000, 120000, 180000, 220000, 210000, 250000, 270000,
+          300000, 320000, 350000, 400000,
         ],
         fill: false,
         borderColor: "#36A2EB",
@@ -151,24 +151,27 @@ export const Dashboard = () => {
 
               {/* Line Chart for All Roles */}
               <div className="w-full bg-secondary-100 rounded-md shadow-lg mt-3 pb-5">
-              <div
-                className="m-auto mt-5"
-                style={{ width: "600px", height: "300px" }}
-              >
-                <Line
-                  data={lineData}
-                  options={{
-                    responsive: true,
-                    plugins: {
-                      legend: { position: "top" },
-                      title: { display: true, text: "Monthly Revenue Trends" },
-                    },
-                    scales: {
-                      y: { beginAtZero: true },
-                    },
-                  }}
-                />
-              </div>
+                <div
+                  className="m-auto mt-5"
+                  style={{ width: "600px", height: "300px" }}
+                >
+                  <Line
+                    data={lineData}
+                    options={{
+                      responsive: true,
+                      plugins: {
+                        legend: { position: "top" },
+                        title: {
+                          display: true,
+                          text: "Monthly Revenue Trends",
+                        },
+                      },
+                      scales: {
+                        y: { beginAtZero: true },
+                      },
+                    }}
+                  />
+                </div>
               </div>
             </div>
           </div>
