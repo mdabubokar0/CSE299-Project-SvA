@@ -10,7 +10,7 @@ import {
   Modal,
   Descriptions,
   Button,
-  Select
+  Select,
 } from "antd";
 import {
   CameraOutlined,
@@ -71,7 +71,7 @@ export const PhotographerList = () => {
 
   const handlePaymentSubmit = async () => {
     if (!selectedPhotographer) {
-      message.error("No event selected");
+      message.error("No photographer selected");
       return;
     }
 
@@ -81,24 +81,34 @@ export const PhotographerList = () => {
     }
 
     try {
-      const response = await axios.post("http://localhost:8081/payment/photographer", {
-        photographer_id: selectedPhotographer.id,
-        user_id: 1, // Replace with actual user ID (from JWT or context)
-        payment_method: paymentMethod,
-        mobile_number: mobileNumber,
-        transaction_id: transactionId,
-        amount: selectedPhotographer.hourly_charge,
-        status: "pending"
-      });
+      const token = localStorage.getItem("token");
+      const response = await axios.post(
+        "http://localhost:8081/payment/photographer",
+        {
+          photographer_id: selectedPhotographer.id,
+          payment_method: paymentMethod,
+          mobile_number: mobileNumber,
+          transaction_id: transactionId,
+          amount: selectedPhotographer.hourly_charge,
+          status: "pending",
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-      if (response.data) {
+      if (response.data.success) {
         message.success("Payment successful");
-        handlePaymentModalClose(); // Close payment modal
-        handleModalClose(); // Close event details modal
+        handlePaymentModalClose();
+        handleModalClose();
+      } else {
+        message.error(response.data.message || "Payment failed");
       }
     } catch (error) {
-      console.error("Payment Save Error:", error);
-      message.error("Error saving payment");
+      console.error("Payment Error:", error);
+      message.error(error.response?.data?.message || "Payment failed");
     }
   };
 

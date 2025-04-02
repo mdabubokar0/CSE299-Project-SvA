@@ -1,13 +1,18 @@
 import express from "express";
 import { pool } from "../config/db.js";
-import { registerUser, loginUser, updateUser } from "../models/auth.model.js";
+import {
+  registerUser,
+  loginUser,
+  updateUser,
+  getTicket,
+} from "../models/auth.model.js";
 import { protectRoute } from "../middleware/authMiddleware.js";
 
 const router = express.Router(); // Correctly initialize the router
 
 router.post("/register", registerUser);
 router.post("/login", loginUser);
-router.patch("/update", protectRoute, updateUser)
+router.patch("/update", protectRoute, updateUser);
 
 // Select all users with pagination
 router.get("/users", async (req, res) => {
@@ -103,6 +108,35 @@ router.get("/attendee/count", async (req, res) => {
   } catch (error) {
     console.error("Error fetching attendee count:", error.message);
     res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// Get all tickets for authenticated user
+router.get("/ticket", protectRoute, async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        message: "User ID not found in token",
+      });
+    }
+
+    const tickets = await getTicket(userId);
+
+    res.status(200).json({
+      success: true,
+      tickets: tickets || [], // Returns empty array if no tickets
+    });
+
+  } catch (error) {
+    console.error("Ticket Fetch Error:", error.message);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch tickets",
+      error: error.message,
+    });
   }
 });
 

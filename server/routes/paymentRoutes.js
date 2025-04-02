@@ -7,6 +7,7 @@ import {
   refundTransaction,
 } from "bkash-payment";
 import { eventPayment, photographerPayment } from "../models/payment.model.js";
+import { protectRoute } from "../middleware/authMiddleware.js";
 const router = express.Router();
 
 const bkashConfig = {
@@ -95,9 +96,9 @@ router.get("/bkash-query", async (req, res) => {
 });
 
 // Save event payment
-router.post("/event", eventPayment);
+router.post("/event", protectRoute, eventPayment);
 
 // Save photographer payment
-router.post("/photographer", photographerPayment);
+router.post("/photographer", protectRoute, photographerPayment);
 
 export default router;

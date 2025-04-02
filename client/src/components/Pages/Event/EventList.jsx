@@ -104,23 +104,53 @@ export const EventList = () => {
     }
 
     try {
-      const response = await axios.post("http://localhost:8081/payment/event", {
-        event_id: selectedEvent.id,
-        user_id: 1, // Replace with actual user ID (from JWT or context)
-        payment_method: paymentMethod,
-        mobile_number: mobileNumber,
-        transaction_id: transactionId,
-        amount: selectedEvent.ticket,
-      });
+      // Get token from where you store it (localStorage, context, etc.)
+      const token = localStorage.getItem("token");
 
-      if (response.data) {
-        message.success("Payment successful");
-        handlePaymentModalClose(); // Close payment modal
-        handleModalClose(); // Close event details modal
+      if (!token) {
+        message.error("You need to login first");
+        return;
+      }
+
+      const response = await axios.post(
+        "http://localhost:8081/payment/event",
+        {
+          event_id: selectedEvent.id,
+          payment_method: paymentMethod,
+          mobile_number: mobileNumber,
+          transaction_id: transactionId,
+          amount: selectedEvent.ticket,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.data.success) {
+        message.success(response.data.message || "Payment successful");
+        // Close modals
+        handlePaymentModalClose();
+        handleModalClose();
+      } else {
+        message.error(response.data.error || "Payment failed");
       }
     } catch (error) {
-      console.error("Payment Save Error:", error);
-      message.error("Error saving payment");
+      console.error("Payment Error:", error);
+
+      // More specific error messages
+      if (error.response) {
+        // Server responded with error status
+        message.error(error.response.data.error || "Payment failed");
+      } else if (error.request) {
+        // Request was made but no response
+        message.error("Network error - please try again");
+      } else {
+        // Other errors
+        message.error("Error processing payment");
+      }
     }
   };
 

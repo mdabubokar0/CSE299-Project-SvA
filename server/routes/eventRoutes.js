@@ -3,7 +3,14 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
-import { createEvent, getEvents, getEventById } from "../models/event.model.js";
+import {
+  createEvent,
+  getEvents,
+  getEventById,
+  getPurchasedEvents,
+} from "../models/event.model.js";
+import { pool } from "../config/db.js";
+import { protectRoute } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
@@ -33,7 +40,8 @@ const upload = multer({ storage });
 // Route to Create an Event with Image Upload
 router.post("/create", upload.single("thumbnail"), async (req, res) => {
   try {
-    const { title, description, venue, date, capacity, ticket, category } = req.body;
+    const { title, description, venue, date, capacity, ticket, category } =
+      req.body;
 
     if (!req.file) {
       return res.status(400).json({ error: "Thumbnail is required" });
@@ -56,13 +64,14 @@ router.post("/create", upload.single("thumbnail"), async (req, res) => {
       category // Pass category to the model
     );
 
-    res.status(201).json({ message: "Event created successfully", event: newEvent });
+    res
+      .status(201)
+      .json({ message: "Event created successfully", event: newEvent });
   } catch (error) {
     console.error("Error creating event:", error.message);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
 
 // Route to fetch all events
 router.get("/list", async (req, res) => {
@@ -72,6 +81,46 @@ router.get("/list", async (req, res) => {
   } catch (error) {
     console.error("Error fetching events:", error.message);
     res.status(500).json({ error: "Failed to fetch events" });
+  }
+});
+
+// Get purchased event for a user
+router.get("/purchased", protectRoute, async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        message: "User ID not found in token",
+      });
+    }
+
+    const events = await getPurchasedEvents(userId);
+
+    res.json({
+      success: true,
+      events,
+    });
+  } catch (error) {
+    console.error("Error fetching purchased events:", error);
+    res.status(500).json({
+      success: false,
+      message: error.message || "Failed to fetch purchased events",
+    });
+  }
+});
+
+// Route to fetch event count
+router.get("/count", async (req, res) => {
+  try {
+    const result = await pool.query(
+      "SELECT COUNT(*) FROM event_info"
+    );
+    res.json({ count: result.rows[0].count });
+  } catch (error) {
+    console.error("Error fetching event count:", error.message);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
@@ -92,9 +141,6 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-// Export Router
-export default router;
-
 // Route to search events by title
 router.get("/search", async (req, res) => {
   try {
@@ -110,3 +156,6 @@ router.get("/search", async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
+
+// Export Router
+export default router;

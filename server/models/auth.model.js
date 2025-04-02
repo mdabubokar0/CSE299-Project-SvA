@@ -120,3 +120,34 @@ export const updateUser = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+// Get Tickets
+export const getTicket = async (userId) => {
+  try {
+    const result = await pool.query(
+      `SELECT 
+         ep.id AS ticket_id,
+         ep.transaction_id,
+         ep.amount,
+         ep.payment_method,
+         ep.mobile_number,
+         ep.created_at AS purchase_date,
+         u.name AS attendee_name,
+         ei.title AS event_title,
+         ei.date AS event_date,
+         ei.venue AS event_venue,
+         ei.ticket AS ticket_price,
+         ei.thumbnail AS event_image
+       FROM event_payment ep
+       JOIN users u ON ep.user_id = u.id
+       LEFT JOIN event_info ei ON ep.event_id = ei.id
+       WHERE ep.user_id = $1 
+       ORDER BY ep.created_at DESC`,
+      [userId]
+    );
+    return result.rows;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch tickets from database");
+  }
+};
