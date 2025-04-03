@@ -9,9 +9,9 @@ import { useRouter } from "expo-router";
 import { useAuth } from "@/context/AuthContext";
 import { Ionicons } from "@expo/vector-icons";
 
-export default function menu() {
+export default function Menu() {
   const router = useRouter();
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
 
   const handleLogout = async () => {
     try {
@@ -22,48 +22,145 @@ export default function menu() {
     }
   };
 
-  const menuItems = [
+  // Define all possible menu items with role restrictions
+  const allMenuItems = [
     {
       title: "Dashboard",
       icon: "speedometer",
       onPress: () => router.push("/dashboard"),
+      roles: ["admin", "organizer", "photographer", "attendee"], // All roles
     },
     {
       title: "Users",
       icon: "people",
+      roles: ["admin"], // Only admin
       subItems: [
         {
           title: "Organizers",
           onPress: () => router.push("/users/organizers"),
+          roles: ["admin"],
         },
         {
           title: "Photographers",
           onPress: () => router.push("/users/photographers"),
+          roles: ["admin"],
         },
-        { title: "Attendees", onPress: () => router.push("/users/attendees") },
+        {
+          title: "Attendees",
+          onPress: () => router.push("/users/attendees"),
+          roles: ["admin"],
+        },
       ],
     },
     {
       title: "Events",
       icon: "calendar",
-      onPress: () => router.push("/events"),
+      roles: ["organizer", "attendee"], // These roles
+      subItems: [
+        {
+          title: "Concerts",
+          onPress: () => router.push("/events/concerts"),
+          roles: ["organizer", "attendee"],
+        },
+        {
+          title: "Gaming",
+          onPress: () => router.push("/events/gaming"),
+          roles: ["organizer", "attendee"],
+        },
+        {
+          title: "Anime",
+          onPress: () => router.push("/events/anime"),
+          roles: ["organizer", "attendee"],
+        },
+        {
+          title: "Workshops",
+          onPress: () => router.push("/events/workshops"),
+          roles: ["organizer", "attendee"],
+        },
+        {
+          title: "Create Event",
+          onPress: () => router.push("/events/create"),
+          roles: ["organizer"],
+        },
+      ],
     },
     {
       title: "Products",
       icon: "pricetags",
-      onPress: () => router.push("/products"),
+      roles: ["admin"], // Only admin
+      subItems: [
+        {
+          title: "Drinks",
+          onPress: () => router.push("/products/drinks"),
+          roles: ["admin"],
+        },
+        {
+          title: "Snacks",
+          onPress: () => router.push("/products/snacks"),
+          roles: ["admin"],
+        },
+        {
+          title: "Venues",
+          onPress: () => router.push("/products/venues"),
+          roles: ["admin"],
+        },
+        {
+          title: "Transportation",
+          onPress: () => router.push("/products/transportation"),
+          roles: ["admin"],
+        },
+        {
+          title: "Decorations",
+          onPress: () => router.push("/products/decorations"),
+          roles: ["admin"],
+        },
+        {
+          title: "Create Product",
+          onPress: () => router.push("/products/create"),
+          roles: ["admin"],
+        },
+      ],
+    },
+    {
+      title: "Hiring",
+      icon: "briefcase",
+      onPress: () => router.push("/hiring"),
+      roles: ["photographer"], // Only photographer
     },
     {
       title: "Settings",
       icon: "settings",
       onPress: () => router.push("/settings"),
+      roles: ["admin", "organizer", "photographer", "attendee"], // All roles
     },
     {
       title: "Logout",
       icon: "log-out",
       onPress: handleLogout,
+      roles: ["admin", "organizer", "photographer", "attendee"], // All roles
     },
   ];
+
+  // Filter menu items based on user role
+  const getFilteredMenuItems = () => {
+    if (!user || typeof user.role !== "string") return [];
+
+    return allMenuItems
+      .filter((item) => item.roles.includes(user.role as string))
+      .map((item) => {
+        if (item.subItems) {
+          return {
+            ...item,
+            subItems: item.subItems.filter((subItem) =>
+              subItem.roles.includes(user.role as string)
+            ),
+          };
+        }
+        return item;
+      });
+  };
+
+  const menuItems = getFilteredMenuItems();
 
   return (
     <ScrollView>
@@ -72,13 +169,16 @@ export default function menu() {
 
         {menuItems.map((item, index) => (
           <View key={index} style={styles.menuSection}>
-            <TouchableOpacity style={styles.menuButton} onPress={item.onPress}>
+            <TouchableOpacity
+              style={styles.menuButton}
+              onPress={item.subItems ? undefined : item.onPress}
+            >
               <View style={styles.buttonContent}>
-                <Ionicons name={item.icon as any} size={24} color="#4a6fa5" />
+                <Ionicons name={item.icon as any} size={24} color="#010101" />
                 <Text style={styles.buttonText}>{item.title}</Text>
               </View>
               {item.subItems && (
-                <Ionicons name="chevron-down" size={20} color="#666" />
+                <Ionicons name="chevron-down" size={20} color="#010101" />
               )}
             </TouchableOpacity>
 
@@ -106,7 +206,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: "#f8f9fa",
   },
   header: {
     fontSize: 28,
@@ -140,7 +239,7 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 18,
     marginLeft: 15,
-    color: "#34495e",
+    color: "#010101",
     fontWeight: "500",
   },
   subMenu: {

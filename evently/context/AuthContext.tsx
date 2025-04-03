@@ -4,12 +4,13 @@ import axios from 'axios';
 import { User, AuthContextType } from './types';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
-const API_BASE_URL = "http://172.20.10.2:8081";
+const API_BASE_URL = "http://172.20.10.2:8081"; // Your API URL
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Load user data from AsyncStorage on app load
   useEffect(() => {
     const loadUser = async () => {
       try {
@@ -26,6 +27,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     loadUser();
   }, []);
 
+  // Login function
   const login = async (username: string, password: string) => {
     try {
       setIsLoading(true);
@@ -50,6 +52,34 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  // Register function
+  const register = async (name: string, username: string, role: string, password: string) => {
+    try {
+      setIsLoading(true);
+      const response = await axios.post(`${API_BASE_URL}/api/register`, {
+        name,
+        username,
+        role,
+        password,
+      });
+
+      const userData = {
+        username,
+        token: response.data.token,
+        role,
+      };
+
+      await AsyncStorage.setItem('user', JSON.stringify(userData));
+      setUser(userData);
+    } catch (error) {
+      console.error('Registration failed:', error);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Logout function
   const logout = async () => {
     try {
       await AsyncStorage.removeItem('user');
@@ -60,12 +90,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, isLoading }}>
+    <AuthContext.Provider value={{ user, login, logout, register, isLoading }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
+// Custom hook to use the auth context
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
