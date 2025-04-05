@@ -2,9 +2,10 @@ import React, { createContext, useContext, useState, ReactNode, useEffect } from
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { User, AuthContextType } from './types';
+import { API_URL } from './api';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
-const API_BASE_URL = "http://172.20.10.2:8081"; // Your API URL
+const API_BASE_URL = API_URL; // Your API URL
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);

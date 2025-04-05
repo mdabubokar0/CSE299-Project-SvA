@@ -6,7 +6,7 @@ export default function TabLayout() {
   return (
     <Tabs screenOptions={{ headerTitle: "" }}>
       <Tabs.Screen
-        name="home"
+        name="Home"
         options={{
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="home" color={color} size={size} />
@@ -22,7 +22,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="forum"
+        name="Forum"
         options={{
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="chatbubbles" color={color} size={size} />

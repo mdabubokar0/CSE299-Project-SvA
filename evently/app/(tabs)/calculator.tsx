@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import axios from "axios";
+import { API_URL } from "@/context/api";
 
 type Item = {
   id: number;
@@ -26,8 +27,6 @@ type Brand = {
   price: string;
   img: string;
 };
-
-const API_BASE_URL = "http://172.20.10.2:8081";
 
 const Calculator = () => {
   const [items, setItems] = useState<Item[]>([
@@ -55,7 +54,7 @@ const Calculator = () => {
   useEffect(() => {
     const fetchBrandSuggestions = async () => {
       try {
-        const response = await axios.get(`${API_BASE_URL}/suggestion/list`);
+        const response = await axios.get(`${API_URL}/suggestion/list`);
         const data = response.data;
 
         const formattedData: { [key: string]: Brand[] } = {};
@@ -188,7 +187,7 @@ const Calculator = () => {
                 }
               >
                 <Image
-                  source={{ uri: `${API_BASE_URL}${item.img}` }}
+                  source={{ uri: `${API_URL}${item.img}` }}
                   style={{ width: 50, height: 50, borderRadius: 8 }}
                 />
                 <Text style={{ marginLeft: 10, flex: 1 }}>{item.brand}</Text>

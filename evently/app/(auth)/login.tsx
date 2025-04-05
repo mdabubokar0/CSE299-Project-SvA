@@ -11,8 +11,6 @@ import { Link, router } from "expo-router";
 import { useAuth } from "../../context/AuthContext";
 import { Stack } from "expo-router";
 
-const API_BASE_URL = "http://172.20.10.2:8081";
-
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -21,7 +19,7 @@ export default function Login() {
   const handleLogin = async () => {
     try {
       await login(username, password);
-      router.replace("/(tabs)/home");
+      router.replace("/(tabs)/Home");
     } catch (error) {
       Alert.alert("Login Failed Invalid credentials");
     }

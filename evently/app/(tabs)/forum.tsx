@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -8,9 +8,10 @@ import {
   Modal,
   Alert,
   ScrollView,
-} from 'react-native';
-import { Appbar, Card, Button, IconButton } from 'react-native-paper';
-import axios from 'axios';
+} from "react-native";
+import { Appbar, Card, Button, IconButton } from "react-native-paper";
+import axios from "axios";
+import { API_URL } from "@/context/api";
 
 // Types
 interface Comment {
@@ -28,34 +29,37 @@ interface Discussion {
   comments?: Comment[];
 }
 
-const API_BASE_URL = 'http://172.20.10.2:8081/discussion';
+const API_BASE_URL = `${API_URL}/discussion`;
 
 const Forum: React.FC = () => {
   const [discussions, setDiscussions] = useState<Discussion[]>([]);
   const [loading, setLoading] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [comment, setComment] = useState('');
-  const [selectedDiscussion, setSelectedDiscussion] = useState<Discussion | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [comment, setComment] = useState("");
+  const [selectedDiscussion, setSelectedDiscussion] =
+    useState<Discussion | null>(null);
   const [isCommentModalOpen, setCommentModalOpen] = useState(false);
   const [isCreateModalOpen, setCreateModalOpen] = useState(false);
   const [newDiscussion, setNewDiscussion] = useState({
-    title: '',
-    description: '',
+    title: "",
+    description: "",
   });
   const [comments, setComments] = useState<Comment[]>([]);
   const [isViewCommentsModalOpen, setViewCommentsModalOpen] = useState(false);
   const [isEditModalOpen, setEditModalOpen] = useState(false);
-  const [editingDiscussion, setEditingDiscussion] = useState<Discussion | null>(null);
+  const [editingDiscussion, setEditingDiscussion] = useState<Discussion | null>(
+    null
+  );
 
   const decodeJWT = (token: string | null) => {
     if (!token) return null;
-  
-    const base64Url = token.split('.')[1];
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+
+    const base64Url = token.split(".")[1];
+    const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
     const decodedData = JSON.parse(atob(base64));
     return decodedData;
   };
-  
+
   useEffect(() => {
     fetchDiscussions();
   }, [searchQuery]);
@@ -69,55 +73,55 @@ const Forum: React.FC = () => {
       const res = await axios.get(url);
       setDiscussions(res.data);
     } catch (error) {
-      Alert.alert('Error', 'Error fetching discussions');
+      Alert.alert("Error", "Error fetching discussions");
     } finally {
       setLoading(false);
     }
   };
 
   const getAuthHeaders = () => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     return token ? { Authorization: `Bearer ${token}` } : {};
   };
 
   const handleCommentSubmit = async () => {
     if (!comment.trim()) {
-      Alert.alert('Warning', 'Comment cannot be empty!');
+      Alert.alert("Warning", "Comment cannot be empty!");
       return;
     }
-    
+
     try {
       await axios.post(
         `${API_BASE_URL}/${selectedDiscussion?.id}/comment`,
         { comment },
         { headers: getAuthHeaders() }
       );
-      Alert.alert('Success', 'Comment added!');
-      setComment('');
+      Alert.alert("Success", "Comment added!");
+      setComment("");
       setCommentModalOpen(false);
       fetchDiscussions();
     } catch (error) {
-      Alert.alert('Error', 'Failed to add comment');
+      Alert.alert("Error", "Failed to add comment");
     }
   };
 
   const handleCreateDiscussion = async () => {
     const { title, description } = newDiscussion;
     if (!title.trim() || !description.trim()) {
-      Alert.alert('Warning', 'All fields are required!');
+      Alert.alert("Warning", "All fields are required!");
       return;
     }
-    
+
     try {
       await axios.post(`${API_BASE_URL}/create`, newDiscussion, {
         headers: getAuthHeaders(),
       });
-      Alert.alert('Success', 'Discussion created!');
+      Alert.alert("Success", "Discussion created!");
       setCreateModalOpen(false);
-      setNewDiscussion({ title: '', description: '' });
+      setNewDiscussion({ title: "", description: "" });
       fetchDiscussions();
     } catch (error) {
-      Alert.alert('Error', 'Failed to create discussion');
+      Alert.alert("Error", "Failed to create discussion");
     }
   };
 
@@ -127,9 +131,16 @@ const Forum: React.FC = () => {
 
     try {
       const res = await axios.get(`${API_BASE_URL}/${discussion.id}/comments`);
-      setComments(res.data);
+      console.log("Comments response:", res.data);
+
+      if (Array.isArray(res.data)) {
+        setComments(res.data);
+      } else {
+        setComments([]); // fallback
+      }
     } catch (error) {
-      Alert.alert('Error', 'Failed to fetch comments');
+      console.error(error);
+      Alert.alert("Error", "Failed to fetch comments");
     }
   };
 
@@ -139,8 +150,11 @@ const Forum: React.FC = () => {
   };
 
   const handleEditDiscussion = async () => {
-    if (!editingDiscussion?.title.trim() || !editingDiscussion?.description.trim()) {
-      Alert.alert('Warning', 'Title and description cannot be empty!');
+    if (
+      !editingDiscussion?.title.trim() ||
+      !editingDiscussion?.description.trim()
+    ) {
+      Alert.alert("Warning", "Title and description cannot be empty!");
       return;
     }
 
@@ -154,35 +168,35 @@ const Forum: React.FC = () => {
         { headers: getAuthHeaders() }
       );
 
-      Alert.alert('Success', 'Discussion updated successfully!');
+      Alert.alert("Success", "Discussion updated successfully!");
       setEditModalOpen(false);
       fetchDiscussions();
     } catch (error) {
-      Alert.alert('Error', 'Failed to update discussion');
+      Alert.alert("Error", "Failed to update discussion");
     }
   };
 
   const handleDeleteDiscussion = (discussionId: number) => {
     Alert.alert(
-      'Confirm Delete',
-      'Are you sure you want to delete this discussion?',
+      "Confirm Delete",
+      "Are you sure you want to delete this discussion?",
       [
         {
-          text: 'Cancel',
-          style: 'cancel',
+          text: "Cancel",
+          style: "cancel",
         },
         {
-          text: 'Delete',
-          style: 'destructive',
+          text: "Delete",
+          style: "destructive",
           onPress: async () => {
             try {
               await axios.delete(`${API_BASE_URL}/${discussionId}`, {
                 headers: getAuthHeaders(),
               });
-              Alert.alert('Success', 'Discussion deleted successfully!');
+              Alert.alert("Success", "Discussion deleted successfully!");
               fetchDiscussions();
             } catch (error) {
-              Alert.alert('Error', 'Failed to delete discussion');
+              Alert.alert("Error", "Failed to delete discussion");
             }
           },
         },
@@ -198,25 +212,28 @@ const Forum: React.FC = () => {
         <Text style={styles.username}>By: {item.username}</Text>
       </Card.Content>
       <Card.Actions>
-        <Button onPress={() => {
-          setSelectedDiscussion(item);
-          setCommentModalOpen(true);
-        }}>
+        <Button
+          textColor="#010101"
+          onPress={() => {
+            setSelectedDiscussion(item);
+            setCommentModalOpen(true);
+          }}
+        >
           Answer
         </Button>
         <IconButton
           icon="message"
-          
+          iconColor="#010101"
           onPress={() => handleViewComments(item)}
         />
         <IconButton
           icon="pencil"
-          
+          iconColor="#010101"
           onPress={() => handleEditClick(item)}
         />
         <IconButton
           icon="delete"
-         
+          iconColor="#010101"
           onPress={() => handleDeleteDiscussion(item.id)}
         />
       </Card.Actions>
@@ -227,11 +244,11 @@ const Forum: React.FC = () => {
     <View style={styles.commentItem}>
       <Text>{item.comment}</Text>
       <Text style={styles.commentMeta}>
-        By: <Text style={styles.commentUser}>{item.username}</Text> on{' '}
-        {new Date(item.created_at).toLocaleDateString('en-GB', {
-          day: 'numeric',
-          month: 'short',
-          year: 'numeric',
+        By: <Text style={styles.commentUser}>{item.username}</Text> on{" "}
+        {new Date(item.created_at).toLocaleDateString("en-GB", {
+          day: "numeric",
+          month: "short",
+          year: "numeric",
         })}
       </Text>
     </View>
@@ -254,7 +271,7 @@ const Forum: React.FC = () => {
             style={styles.createButton}
             onPress={() => setCreateModalOpen(true)}
           >
-            Ask Question
+            Ask
           </Button>
         </View>
 
@@ -284,7 +301,9 @@ const Forum: React.FC = () => {
               style={styles.input}
               placeholder="Title"
               value={newDiscussion.title}
-              onChangeText={(text) => setNewDiscussion({ ...newDiscussion, title: text })}
+              onChangeText={(text) =>
+                setNewDiscussion({ ...newDiscussion, title: text })
+              }
             />
             <TextInput
               style={[styles.input, styles.textArea]}
@@ -292,7 +311,9 @@ const Forum: React.FC = () => {
               multiline
               numberOfLines={4}
               value={newDiscussion.description}
-              onChangeText={(text) => setNewDiscussion({ ...newDiscussion, description: text })}
+              onChangeText={(text) =>
+                setNewDiscussion({ ...newDiscussion, description: text })
+              }
             />
             <Button
               mode="contained"
@@ -344,14 +365,26 @@ const Forum: React.FC = () => {
       >
         <View style={styles.modalContainer}>
           <Appbar.Header>
-            <Appbar.BackAction onPress={() => setViewCommentsModalOpen(false)} />
+            <Appbar.BackAction
+              onPress={() => setViewCommentsModalOpen(false)}
+            />
             <Appbar.Content title="Answers" />
           </Appbar.Header>
           <FlatList
-            data={comments}
+            data={Array.isArray(comments) ? comments.filter(Boolean) : []}
             renderItem={renderCommentItem}
-            keyExtractor={(item) => item.id.toString()}
+            keyExtractor={(item, index) => {
+              // If `item.id` is valid, use it. Otherwise, fallback to index
+              if (item?.id != null) return item.id.toString();
+              console.warn("Invalid comment item (no id):", item);
+              return index.toString();
+            }}
             contentContainerStyle={styles.commentsList}
+            ListEmptyComponent={
+              <Text style={{ textAlign: "center", marginTop: 20 }}>
+                No answers found
+              </Text>
+            }
           />
         </View>
       </Modal>
@@ -371,16 +404,25 @@ const Forum: React.FC = () => {
             <TextInput
               style={styles.input}
               placeholder="Title"
-              value={editingDiscussion?.title || ''}
-              onChangeText={(text) => editingDiscussion && setEditingDiscussion({ ...editingDiscussion, title: text })}
+              value={editingDiscussion?.title || ""}
+              onChangeText={(text) =>
+                editingDiscussion &&
+                setEditingDiscussion({ ...editingDiscussion, title: text })
+              }
             />
             <TextInput
               style={[styles.input, styles.textArea]}
               placeholder="Description"
               multiline
               numberOfLines={4}
-              value={editingDiscussion?.description || ''}
-              onChangeText={(text) => editingDiscussion && setEditingDiscussion({ ...editingDiscussion, description: text })}
+              value={editingDiscussion?.description || ""}
+              onChangeText={(text) =>
+                editingDiscussion &&
+                setEditingDiscussion({
+                  ...editingDiscussion,
+                  description: text,
+                })
+              }
             />
             <Button
               mode="contained"
@@ -400,7 +442,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: "#f5f5f5",
   },
   header: {
     fontSize: 28,
@@ -415,18 +457,19 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   searchContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     marginBottom: 16,
   },
   searchInput: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: "white",
     padding: 10,
     borderRadius: 4,
     marginRight: 8,
   },
   createButton: {
     borderRadius: 4,
+    backgroundColor: "#010101",
   },
   listContent: {
     paddingBottom: 16,
@@ -436,35 +479,37 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 8,
   },
   username: {
     fontSize: 12,
-    color: '#666',
+    color: "#666",
     marginTop: 8,
   },
   modalContainer: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: "white",
   },
   modalContent: {
     padding: 16,
   },
   input: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     marginBottom: 16,
     padding: 10,
     borderRadius: 4,
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: "#ddd",
   },
   textArea: {
     minHeight: 100,
-    textAlignVertical: 'top',
+    textAlignVertical: "top",
   },
   submitButton: {
-    marginTop: 16,
+    marginTop: 8,
+    borderRadius: 8,
+    backgroundColor: "#010101",
   },
   commentsList: {
     padding: 16,
@@ -472,15 +517,15 @@ const styles = StyleSheet.create({
   commentItem: {
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    borderBottomColor: "#eee",
   },
   commentMeta: {
     fontSize: 12,
-    color: '#666',
+    color: "#666",
     marginTop: 8,
   },
   commentUser: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 });
 

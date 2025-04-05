@@ -9,8 +9,7 @@ import {
   ScrollView,
 } from "react-native";
 import axios from "axios";
-
-const API_BASE_URL = "http://172.20.10.2:8081";
+import { API_URL } from "@/context/api";
 
 interface Event {
   id: number;
@@ -27,7 +26,7 @@ interface Photographer {
   hourly_charge: number;
 }
 
-export default function home() {
+export default function Home() {
   const [events, setEvents] = useState<Event[]>([]);
   const [photographers, setPhotographers] = useState<Photographer[]>([]);
   const [loading, setLoading] = useState(true);
@@ -36,8 +35,8 @@ export default function home() {
     const fetchData = async () => {
       try {
         const [eventsRes, photographersRes] = await Promise.all([
-          axios.get(`${API_BASE_URL}/event/list`),
-          axios.get(`${API_BASE_URL}/photographer/list`),
+          axios.get(`${API_URL}/event/list`),
+          axios.get(`${API_URL}/photographer/list`),
         ]);
 
         setEvents(eventsRes.data);
@@ -150,7 +149,7 @@ export default function home() {
 const EventCard: React.FC<{ event: Event }> = ({ event }) => {
   const imageUrl = event.thumbnail.startsWith("http")
     ? event.thumbnail
-    : `${API_BASE_URL}${event.thumbnail}`;
+    : `${API_URL}${event.thumbnail}`;
 
   return (
     <View style={styles.card}>
@@ -166,7 +165,7 @@ const PhotographerCard: React.FC<{ photographer: Photographer }> = ({
 }) => {
   const imageUrl = photographer.picture.startsWith("http")
     ? photographer.picture
-    : `${API_BASE_URL}${photographer.picture}`;
+    : `${API_URL}${photographer.picture}`;
 
   return (
     <View style={styles.card}>
