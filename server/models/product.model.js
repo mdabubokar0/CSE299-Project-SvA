@@ -1,7 +1,7 @@
 import { pool } from "../config/db.js";
 
 // Function to create a new suggestion
-export const createSuggestion = async (title, price, thumbnail, type) => {
+export const createProduct = async (title, price, thumbnail, type) => {
   const query = `
     INSERT INTO suggestion_info (title, price, thumbnail, type)
     VALUES ($1, $2, $3, $4) RETURNING *`;
@@ -18,7 +18,7 @@ export const createSuggestion = async (title, price, thumbnail, type) => {
 };
 
 // Function to fetch all suggestions
-export const getSuggestions = async () => {
+export const getProducts = async () => {
   try {
     const result = await pool.query(`SELECT * FROM suggestion_info`);
     return result.rows;
@@ -29,7 +29,7 @@ export const getSuggestions = async () => {
 };
 
 // Delete a suggestion by ID
-export const deleteSuggestion = async (id) => {
+export const deleteProduct = async (id) => {
   try {
     const result = await pool.query(
       "DELETE FROM suggestion_info WHERE id = $1 RETURNING *",
@@ -43,7 +43,7 @@ export const deleteSuggestion = async (id) => {
 };
 
 // Update a suggestion by ID
-export const updateSuggestion = async (id, title, price, thumbnail, type) => {
+export const updateProduct = async (id, title, price, thumbnail, type) => {
   try {
     const result = await pool.query(
       `UPDATE suggestion_info

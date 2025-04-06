@@ -5,7 +5,7 @@ import axios from "axios";
 import { Sidebar } from "../../Sidebar/Sidebar";
 import { Avatar } from "../../Profile/Avatar";
 
-export const CreateSuggestion = ({ userId }) => {
+export const CreateProduct = () => {
   const [fileList, setFileList] = useState([]); // Store uploaded file list
   const [loading, setLoading] = useState(false);
 
@@ -90,8 +90,8 @@ export const CreateSuggestion = ({ userId }) => {
               rules={[{ required: true, message: "Please select type" }]}
             >
               <Select placeholder="Select type">
-                <Select.Option value="Drinks">Drinks</Select.Option>
-                <Select.Option value="Snacks">Snacks</Select.Option>
+                <Select.Option value="Drink">Drinks</Select.Option>
+                <Select.Option value="Snack">Snacks</Select.Option>
                 <Select.Option value="Venue">Venue</Select.Option>
                 <Select.Option value="Transportation">Transportation</Select.Option>
                 <Select.Option value="Decoration">Decoration</Select.Option>

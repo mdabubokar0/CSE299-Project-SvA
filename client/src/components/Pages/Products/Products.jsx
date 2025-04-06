@@ -6,7 +6,7 @@ import { Table, Button, Modal, Form, Input, Select, message } from "antd"; // Im
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import axios from "axios";
 
-export const SuggestionList = () => {
+export const Products = ({ productType }) => {
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
   const [suggestions, setSuggestions] = useState([]);
@@ -40,10 +40,19 @@ export const SuggestionList = () => {
           },
         }
       );
-      setSuggestions(response.data.suggestions);
+
+      // Filter on client side as fallback (though server should handle it)
+      const filteredData =
+        productType === "All"
+          ? response.data.suggestions
+          : response.data.suggestions.filter(
+              (suggestion) => suggestion.type === productType
+            );
+
+      setSuggestions(filteredData);
       setPagination((prev) => ({
         ...prev,
-        total: response.data.total,
+        total: filteredData.length, // Or response.data.total if server returns filtered count
       }));
     } catch (error) {
       console.error("Error fetching suggestions:", error);
@@ -167,7 +176,7 @@ export const SuggestionList = () => {
       <div className="m-3 w-full">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-medium bg-secondary-100 p-3 rounded-md shadow-lg">
-            Products
+            {productType}s
           </h1>
           <Avatar />
         </div>

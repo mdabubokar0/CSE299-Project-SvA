@@ -14,8 +14,12 @@ import { CreateEvent } from "./components/Pages/Event/CreateEvent";
 import { Feedback } from "./components/Pages/Feedback/Feedback";
 import { Photographers } from "./components/Pages/Photographers/Photographers";
 import { CreatePhotographer } from "./components/Pages/Photographers/CreatePhotographer";
-import { SuggestionList } from "./components/Pages/Suggestions/SuggestionList";
-import { CreateSuggestion } from "./components/Pages/Suggestions/CreateSuggestion";
+import { Drinks } from "./components/Pages/Products/Drinks";
+import { Snacks } from "./components/Pages/Products/Snacks";
+import { Venues } from "./components/Pages/Products/Venues";
+import { Transportation } from "./components/Pages/Products/Transportation";
+import { Decorations } from "./components/Pages/Products/Decorations";
+import { CreateProduct } from "./components/Pages/Products/CreateProduct";
 import { Organizers as OList } from "./components/Pages/Users/Organizers";
 import { Photographers as PList } from "./components/Pages/Users/Photographers";
 import { Attendees as AList } from "./components/Pages/Users/Attendees";
@@ -40,8 +44,12 @@ function App() {
         <Route exact path="/feedback" element={<Feedback />} />
         <Route exact path="/photographers" element={<Photographers />} />
         <Route exact path="/create-photographer" element={<CreatePhotographer />}/>
-        <Route exact path="/products" element={<SuggestionList />} />
-        <Route exact path="/products/create" element={<CreateSuggestion />} />
+        <Route exact path="/products/drinks" element={<Drinks />} />
+        <Route exact path="/products/snacks" element={<Snacks />} />
+        <Route exact path="/products/venues" element={<Venues />} />
+        <Route exact path="/products/transportation" element={<Transportation />} />
+        <Route exact path="/products/decorations" element={<Decorations />} />
+        <Route exact path="/products/create" element={<CreateProduct />} />
         <Route exact path="/users/organizers" element={<OList />} />
         <Route exact path="/users/photographers" element={<PList />} />
         <Route exact path="/users/attendees" element={<AList />} />

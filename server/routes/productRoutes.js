@@ -4,10 +4,10 @@ import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
 import {
-  createSuggestion,
-  getSuggestions,
-  deleteSuggestion,
-  updateSuggestion,
+  createProduct,
+  getProducts,
+  deleteProduct,
+  updateProduct,
 } from "../models/product.model.js"; // Import the model functions
 import { protectRoute } from "../middleware/authMiddleware.js";
 import { pool } from "../config/db.js";
@@ -52,8 +52,8 @@ router.post(
 
       const thumbnailUrl = `/uploads/${req.file.filename}`; // Local file path
 
-      // Use createSuggestion to insert new suggestion into the database
-      const newSuggestion = await createSuggestion(
+      // Use createProduct to insert new suggestion into the database
+      const newSuggestion = await createProduct(
         title,
         parseFloat(price), // Convert price to a number
         thumbnailUrl, // Save thumbnail path
@@ -71,7 +71,7 @@ router.post(
 // Route to fetch all suggestions
 router.get("/list", async (req, res) => {
   try {
-    const suggestions = await getSuggestions(); // Use getSuggestions function
+    const suggestions = await getProducts(); // Use getProducts function
     res.json(suggestions);
   } catch (error) {
     console.error("Error fetching suggestions:", error.message);
@@ -108,7 +108,7 @@ router.get("/paginated-list", async (req, res) => {
 router.delete("/delete/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const deletedSuggestion = await deleteSuggestion(id);
+    const deletedSuggestion = await deleteProduct(id);
     if (!deletedSuggestion) {
       return res.status(404).json({ error: "Suggestion not found" });
     }
@@ -125,7 +125,7 @@ router.patch("/edit/:id", async (req, res) => {
     const { id } = req.params;
     const { title, price, thumbnail, type } = req.body;
 
-    const updatedSuggestion = await updateSuggestion(
+    const updatedSuggestion = await updateProduct(
       id,
       title,
       price,

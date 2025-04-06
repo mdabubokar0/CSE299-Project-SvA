@@ -72,7 +72,7 @@ CREATE TABLE photographer_payment (
 );
 
 -- Create suggestion table
-CREATE TABLE suggestion_info (
+CREATE TABLE product_info (
     id SERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     price DECIMAL(10, 2) NOT NULL,
