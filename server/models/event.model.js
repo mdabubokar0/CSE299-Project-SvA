@@ -40,6 +40,47 @@ export const getEvents = async () => {
   }
 };
 
+// Delete an event by ID
+export const deleteEvent = async (id) => {
+  try {
+    const result = await pool.query(
+      "DELETE FROM event_info WHERE id = $1 RETURNING *",
+      [id]
+    );
+    return result.rows[0]; // Return the deleted event
+  } catch (error) {
+    console.error("Error deleting event:", error.message);
+    throw error;
+  }
+};
+
+// Update an event by ID
+export const updateEvent = async (
+  id,
+  title,
+  description,
+  thumbnail,
+  venue,
+  date,
+  capacity,
+  ticket
+) => {
+  try {
+    const result = await pool.query(
+      `UPDATE event_info
+         SET title = $1, description = $2, thumbnail = $3,
+             venue = $4, date = $5, capacity = $6, ticket = $7
+         WHERE id = $8
+         RETURNING *`,
+      [title, description, thumbnail, venue, date, capacity, ticket, id]
+    );
+    return result.rows[0]; // Return the updated event
+  } catch (error) {
+    console.error("Error updating event:", error.message);
+    throw error;
+  }
+};
+
 // Get purchased events for user
 export const getPurchasedEvents = async (userId) => {
   try {

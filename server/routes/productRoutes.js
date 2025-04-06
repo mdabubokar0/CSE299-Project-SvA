@@ -8,7 +8,7 @@ import {
   getSuggestions,
   deleteSuggestion,
   updateSuggestion,
-} from "../models/suggestion.model.js"; // Import the model functions
+} from "../models/product.model.js"; // Import the model functions
 import { protectRoute } from "../middleware/authMiddleware.js";
 import { pool } from "../config/db.js";
 

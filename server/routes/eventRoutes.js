@@ -6,6 +6,8 @@ import { fileURLToPath } from "url";
 import {
   createEvent,
   getEvents,
+  deleteEvent,
+  updateEvent,
   getEventById,
   getPurchasedEvents,
 } from "../models/event.model.js";
@@ -84,6 +86,73 @@ router.get("/list", async (req, res) => {
   }
 });
 
+// Fetch paginated events
+router.get("/paginated-list", async (req, res) => {
+  try {
+    const { page = 1, limit = 10 } = req.query;
+    const offset = (page - 1) * limit;
+
+    const eventsQuery = await pool.query(
+      "SELECT * FROM event_info ORDER BY id LIMIT $1 OFFSET $2",
+      [limit, offset]
+    );
+
+    const countQuery = await pool.query("SELECT COUNT(*) FROM event_info");
+
+    res.json({
+      events: eventsQuery.rows,
+      total: parseInt(countQuery.rows[0].count),
+    });
+  } catch (error) {
+    console.error("Error fetching events:", error.message);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// Delete an event by ID
+router.delete("/delete/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deletedEvent = await deleteEvent(id);
+    if (!deletedEvent) {
+      return res.status(404).json({ error: "Event not found" });
+    }
+    res.json({ message: "Event deleted successfully", deletedEvent });
+  } catch (error) {
+    console.error("Error deleting event:", error.message);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// Update an event by ID
+router.patch("/edit/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, description, thumbnail, venue, date, capacity, ticket } =
+      req.body;
+
+    const updatedEvent = await updateEvent(
+      id,
+      title,
+      description,
+      thumbnail,
+      venue,
+      date,
+      capacity,
+      ticket
+    );
+
+    if (!updatedEvent) {
+      return res.status(404).json({ error: "Event not found" });
+    }
+
+    res.json({ message: "Event updated successfully", updatedEvent });
+  } catch (error) {
+    console.error("Error updating event:", error.message);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 // Get purchased event for a user
 router.get("/purchased", protectRoute, async (req, res) => {
   try {
@@ -114,9 +183,7 @@ router.get("/purchased", protectRoute, async (req, res) => {
 // Route to fetch event count
 router.get("/count", async (req, res) => {
   try {
-    const result = await pool.query(
-      "SELECT COUNT(*) FROM event_info"
-    );
+    const result = await pool.query("SELECT COUNT(*) FROM event_info");
     res.json({ count: result.rows[0].count });
   } catch (error) {
     console.error("Error fetching event count:", error.message);

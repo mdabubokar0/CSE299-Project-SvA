@@ -6,6 +6,10 @@ import { Dashboard } from "./components/Pages/Dashboard/Dashboard";
 import { Forum } from "./components/Pages/Forum/Forum";
 import { Calculator } from "./components/Pages/Calculator/Calculator";
 import { Ticket } from "./components/Pages/Ticket/Ticket";
+import { Concert } from "./components/Pages/Event/Concerts";
+import { Gaming } from "./components/Pages/Event/Gaming";
+import { Anime } from "./components/Pages/Event/Anime";
+import { Workshops } from "./components/Pages/Event/Workshops";
 import { CreateEvent } from "./components/Pages/Event/CreateEvent";
 import { Feedback } from "./components/Pages/Feedback/Feedback";
 import { Photographers } from "./components/Pages/Photographers/Photographers";
@@ -28,6 +32,10 @@ function App() {
         <Route exact path="/forum" element={<Forum />} />
         <Route exact path="/calculator" element={<Calculator />} />
         <Route exact path="/ticket" element={<Ticket />} />
+        <Route exact path="/events/concerts" element={<Concert />} />
+        <Route exact path="/events/gaming" element={<Gaming />} />
+        <Route exact path="/events/anime" element={<Anime />} />
+        <Route exact path="/events/workshops" element={<Workshops />} />
         <Route exact path="/create-event" element={<CreateEvent />} />
         <Route exact path="/feedback" element={<Feedback />} />
         <Route exact path="/photographers" element={<Photographers />} />
