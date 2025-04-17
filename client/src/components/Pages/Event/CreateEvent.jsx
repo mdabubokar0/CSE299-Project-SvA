@@ -52,10 +52,10 @@ export const CreateEvent = () => {
       );
 
       message.success("Event created successfully!");
-      console.log("✅ Event Created:", response.data);
+      console.log("Event Created:", response.data);
     } catch (error) {
-      message.error("❌ Error creating event");
-      console.error("❌ Error:", error);
+      message.error("Error creating event");
+      console.error("Error:", error);
     } finally {
       setLoading(false);
     }

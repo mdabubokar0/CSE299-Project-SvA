@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Table } from "antd";
 import axios from "axios";
+import { Sidebar } from "../../Sidebar/Sidebar";
+import { Avatar } from "../../Profile/Avatar";
 
 export const Users = ({ userType }) => {
   const token = localStorage.getItem("token");
@@ -34,15 +36,16 @@ export const Users = ({ userType }) => {
       const response = await axios.get("http://localhost:8081/api/users", {
         params,
         headers: {
-          Authorization: `Bearer ${token}` // Make sure to send the token
-        }
+          Authorization: `Bearer ${token}`, // Make sure to send the token
+        },
       });
-      
+
       // Filter on client side as fallback (though server should handle it)
-      const filteredData = userType === "all" 
-        ? response.data.users 
-        : response.data.users.filter(user => user.role === userType);
-      
+      const filteredData =
+        userType === "all"
+          ? response.data.users
+          : response.data.users.filter((user) => user.role === userType);
+
       setUserData(filteredData);
       setPagination((prev) => ({
         ...prev,
@@ -83,18 +86,33 @@ export const Users = ({ userType }) => {
   };
 
   return (
-    <Table
-      columns={columns}
-      dataSource={userData}
-      rowKey="id"
-      loading={loading}
-      pagination={{
-        ...pagination,
-        showTotal: paginationText,
-        showSizeChanger: true,
-        pageSizeOptions: ["10", "20", "50"],
-      }}
-      onChange={handleTableChange}
-    />
+    <div className="flex">
+      <div className="w-auto">
+        <Sidebar />
+      </div>
+      <div className="m-3 w-full">
+        <div className="flex items-center justify-between">
+          <h1 className="text-2xl font-medium bg-secondary-100 p-3 rounded-md shadow-lg">
+            {userType.charAt(0).toUpperCase() + userType.slice(1).toLowerCase()}s
+          </h1>
+          <Avatar />
+        </div>
+        <div className="mt-3">
+          <Table
+            columns={columns}
+            dataSource={userData}
+            rowKey="id"
+            loading={loading}
+            pagination={{
+              ...pagination,
+              showTotal: paginationText,
+              showSizeChanger: true,
+              pageSizeOptions: ["10", "20", "50"],
+            }}
+            onChange={handleTableChange}
+          />
+        </div>
+      </div>
+    </div>
   );
 };

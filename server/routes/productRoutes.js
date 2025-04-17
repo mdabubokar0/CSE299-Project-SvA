@@ -87,12 +87,12 @@ router.get("/paginated-list", async (req, res) => {
 
     // Fetch paginated suggestions
     const suggestionsQuery = await pool.query(
-      "SELECT * FROM suggestion_info ORDER BY id LIMIT $1 OFFSET $2",
+      "SELECT * FROM product_info ORDER BY id LIMIT $1 OFFSET $2",
       [limit, offset]
     );
 
     // Fetch total count of suggestions
-    const countQuery = await pool.query("SELECT COUNT(*) FROM suggestion_info");
+    const countQuery = await pool.query("SELECT COUNT(*) FROM product_info");
 
     res.json({
       suggestions: suggestionsQuery.rows,

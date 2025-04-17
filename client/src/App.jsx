@@ -40,7 +40,7 @@ function App() {
         <Route exact path="/events/gaming" element={<Gaming />} />
         <Route exact path="/events/anime" element={<Anime />} />
         <Route exact path="/events/workshops" element={<Workshops />} />
-        <Route exact path="/create-event" element={<CreateEvent />} />
+        <Route exact path="/events/create" element={<CreateEvent />} />
         <Route exact path="/feedback" element={<Feedback />} />
         <Route exact path="/photographers" element={<Photographers />} />
         <Route exact path="/create-photographer" element={<CreatePhotographer />}/>
